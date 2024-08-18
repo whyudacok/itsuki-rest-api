@@ -29,38 +29,40 @@ router.get('/', async (req, res) => {
         const html = response.data;
         const $ = cheerio.load(html);
 
-        const articles = [];
+        const results = [];
         
         $('div.bsx').each((index, element) => {
             const article = $(element).closest('article.bs');
             let link = $(element).find('a').attr('href');
             const jenis = $(element).find('div.typez').text().trim();
             const judul = $(element).find('div.tt').text().trim();
-            const gambar = $(element).find('img').attr('src');
+            let gambar = $(element).find('img').attr('src');
+
+            // Replace the domain in the image URL
+            if (gambar) {
+                gambar = gambar.replace('tv.animisme.net/wp-content/uploads', 'animasu.cc/wp-content/uploads');
+            }
 
             // Remove the domain part (https://tv.animisme.net/)
             link = link.replace(aniUrl, '');
 
-            // Check if the link starts with /anime/
-            if (link.startsWith('/anime/')) {
-                // Replace /anime/:end with /detail/:end
-                link = link.replace('/anime/', '/detail/');
-            } else {
-                // Add /episode/ prefix to the link if it doesn't have /detail/
-                if (!link.startsWith('/detail/')) {
-                    link = '/episode' + link;
-                }
+            // Extract episode number from the link
+            const episodeMatch = link.match(/episode-(\d+)/);
+            let episode = null;
+            if (episodeMatch) {
+                episode = parseInt(episodeMatch[1], 10);
             }
 
-            articles.push({
+            results.push({
                 link,
                 jenis,
                 judul,
-                gambar
+                gambar,
+                episode // Add episode info to the response
             });
         });
 
-        const data = { status: true, articles };
+        const data = { status: true, results };
 
         // Simpan data ke cache
         cache.set(cacheKey, data);
