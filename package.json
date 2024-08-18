@@ -1,5 +1,5 @@
 {
-  "name": "Otaku screaping",
+  "name": "Itsuki rest api",
   "version": "1.0.0",
   "description": "belajar web scraping",
   "main": "router/app.js",
