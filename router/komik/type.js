@@ -28,19 +28,19 @@ router.get('/:type/:page', async (req, res) => {
       $(el).attr('href', href.replace(baseUrl, ''));
     });
 
-    const mangaList = [];
+    const results = [];
     $('.post-item-box').each((_, el) => {
       const link = $(el).find('a').attr('href');
-      const genre = $(el).find('.flag-country-type').attr('class').split(' ').pop();
+      const type = $(el).find('.flag-country-type').attr('class').split(' ').pop();
       const gambar = $(el).find('.post-item-thumb img').attr('src');
       const judul = $(el).find('.post-item-title h4').text().trim();
       const nilai = $(el).find('.rating i').text().trim();
       const warna = $(el).find('.color-label-manga').text().trim();
 
-      mangaList.push({
+      results.push({
         link,
         genre,
-        gambar,
+        type,
         judul,
         nilai,
         warna
@@ -52,7 +52,7 @@ router.get('/:type/:page', async (req, res) => {
     res.json({
       success: true,
       data: {
-        mangaList,
+        results,
         totalPages
       }
     });
