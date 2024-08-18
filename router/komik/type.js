@@ -39,8 +39,8 @@ router.get('/:type/:page', async (req, res) => {
 
       results.push({
         link,
-        genre,
         type,
+        gambar,
         judul,
         nilai,
         warna
