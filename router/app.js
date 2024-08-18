@@ -4,6 +4,8 @@ const cors = require('cors');
 const axios = require('axios');
 const path = require('path');
 
+
+const mangaTestRoute = require('./komik/test');
 // Import semua route yang sudah kamu buat
 const chapterRoute = require('./komik/chapter');
 const mangaRoute = require('./komik/manga');
@@ -64,6 +66,8 @@ app.use('/api/komik/update', mangaRateLimiter, updateRoute);
 app.use('/api/komik/genre', mangaRateLimiter, mangaGenreRoute);
 app.use('/api/komik/daftar', mangaRateLimiter, daftarRoute);
 app.use('/api/komik/search', mangaRateLimiter, searchRoute);
+
+app.use('/api/komik/test', mangaRateLimiter, mangaTestRoute);
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
