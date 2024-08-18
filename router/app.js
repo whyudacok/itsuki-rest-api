@@ -64,6 +64,13 @@ app.use('/api/komik/genre', mangaRateLimiter, mangaGenreRoute);
 app.use('/api/komik/daftar', mangaRateLimiter, daftarRoute);
 app.use('/api/komik/search', mangaRateLimiter, searchRoute);
 
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.get('/', (req, res) => {
+    res.render('index', { title: 'Free rest api komik anime terlengkap!:v' });
+});
+
 // proxy image 
 app.get('/img', async (req, res, next) => {
   const imageUrl = req.query.url;
