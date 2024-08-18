@@ -41,7 +41,7 @@ router.get('/:page', async (req, res) => {
     const updateKomik = [];
     $('.post-item-box').each((_, el) => {
       const link = $(el).find('a').attr('href');
-      const jenis = $(el).find('.flag-country-type').attr('class').split(' ').pop();
+      const type = $(el).find('.flag-country-type').attr('class').split(' ').pop();
       const gambar = $(el).find('.post-item-thumb img').attr('src');
       const Title = $(el).find('.post-item-title h4').text().trim();
       const chapterLink = $(el).find('.lsch a').attr('href');
@@ -51,7 +51,7 @@ router.get('/:page', async (req, res) => {
 
       updateKomik.push({
         link,
-        jenis,
+        type,
         gambar,
         Title,
         warna,
