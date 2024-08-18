@@ -53,12 +53,12 @@ router.get('/:page', async (req, res) => {
         link,
         jenis,
         gambar,
-        judul,
+        Title,
         warna,
         chapter: {
           link: chapterLink,
-          judul: chapterJudul,
-          tanggal: chapterTanggal
+          Title: chapterJudul,
+          Date: chapterTanggal
         }
       });
     });
@@ -69,14 +69,14 @@ router.get('/:page', async (req, res) => {
       const populerGambar = $(el).find('.thumbnail-series img').attr('src');
       const peringkat = $(el).find('.ctr').text().trim();
       const populerJudul = $(el).find('h4 a.series').text().trim();
-      const suka = $(el).find('.loveviews').text().trim();
+      const rating = $(el).find('.loveviews').text().trim();
 
       komikPopuler.push({
         link: populerLink,
         gambar: populerGambar,
         peringkat,
-        judul: populerJudul,
-        suka
+        Title: populerJudul,
+        rating
       });
     });
 
