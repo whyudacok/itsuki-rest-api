@@ -1,8 +1,8 @@
 {
-  "name": "Manga Scraper",
+  "name": "Otaku screaping",
   "version": "1.0.0",
   "description": "belajar web scraping",
-  "main": "index.js",
+  "main": "router/app.js",
   "scripts": {
     "start": "node router/app.js",
     "dev": "nodemon router/app.js"
@@ -15,6 +15,7 @@
     "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "ejs": "^3.1.9",
     "path": "^0.12.7",
     "request": "^2.88.2",
     "express-rate-limit": "^6.7.0", 
