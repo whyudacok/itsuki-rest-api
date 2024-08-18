@@ -41,7 +41,7 @@ router.get('/:endpoint/:page', async (req, res) => {
     const results = [];
     $('.post-item-box').each((_, el) => {
       const link = $(el).find('a').attr('href');
-      const genre = $(el).find('.flag-country-type').attr('class').split(' ').pop();
+      const type = $(el).find('.flag-country-type').attr('class').split(' ').pop();
       const image = $(el).find('.post-item-thumb img').attr('src');
       const title = $(el).find('.post-item-title h4').text().trim();
       const rating = $(el).find('.rating i').text().trim();
@@ -49,7 +49,7 @@ router.get('/:endpoint/:page', async (req, res) => {
 
       results.push({
         link,
-        genre,
+        type,
         image,
         title,
         rating,
