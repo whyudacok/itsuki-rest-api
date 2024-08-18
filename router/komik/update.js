@@ -80,12 +80,12 @@ router.get('/:page', async (req, res) => {
       });
     });
 
-    const totalHalaman = parseInt($('.pagination a.page-numbers').eq(-2).text().trim());
+    const Totalpages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim());
 
     const data = {
       status: true,
       updateKomik,
-      totalHalaman,
+      Totalpages,
       komikPopuler
     };
 
