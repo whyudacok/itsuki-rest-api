@@ -42,7 +42,7 @@ router.get('/:endpoint/:page', async (req, res) => {
     $('.post-item-box').each((_, el) => {
       const link = $(el).find('a').attr('href');
       const type = $(el).find('.flag-country-type').attr('class').split(' ').pop();
-      const image = $(el).find('.post-item-thumb img').attr('src');
+      const gambar = $(el).find('.post-item-thumb img').attr('src');
       const title = $(el).find('.post-item-title h4').text().trim();
       const rating = $(el).find('.rating i').text().trim();
       const warna = $(el).find('.color-label-manga').text().trim();
@@ -50,7 +50,7 @@ router.get('/:endpoint/:page', async (req, res) => {
       results.push({
         link,
         type,
-        image,
+        gambar,
         title,
         rating,
         warna
