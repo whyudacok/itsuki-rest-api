@@ -64,6 +64,37 @@ app.use('/api/komik/genre', mangaRateLimiter, mangaGenreRoute);
 app.use('/api/komik/daftar', mangaRateLimiter, daftarRoute);
 app.use('/api/komik/search', mangaRateLimiter, searchRoute);
 
+// proxy image 
+app.get('/img', async (req, res, next) => {
+  const imageUrl = req.query.url;
+  try {
+    const response = await axios({
+      url: imageUrl,
+      responseType: 'stream',
+    });
+    response.data.pipe(res);
+  } catch (error) {
+    next(new Error('Error proxying image'));
+  }
+});
+const fetchChapterData = async (endpoint) => {
+  try {
+    const response = await axios.get(`https://cihuyy-api.vercel.app/api/komik/chapter/${endpoint}`);
+    return response.data;
+  } catch (error) {
+    console.error('Terjadi kesalahan saat mengambil data chapter.:', error);
+    return null;
+  }
+};
+
+app.get('/api/komik/next-chapter/:endpoint', async (req, res, next) => {
+  const endpoint = req.params.endpoint;
+  const data = await fetchChapterData(endpoint);
+  if (!data) {
+    return next(new Error('Chapter not found'));
+  }
+  res.json(data);
+});
 // Middleware untuk serve file statis
 app.use(express.static(path.join(__dirname, 'public')));
 
