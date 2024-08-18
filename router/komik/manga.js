@@ -59,7 +59,7 @@ router.get('/:endpoint', async (req, res) => {
     $('.genre-info-manga a').each((_, el) => {
       genre.push({
         judul: $(el).attr('title').trim(),
-        href: $(el).attr('href').trim()
+        link: $(el).attr('href').trim()
       });
     });
 
@@ -79,10 +79,10 @@ router.get('/:endpoint', async (req, res) => {
       const kutipanManga = $(el).find('.excerpt-similiar').text().trim();
       mangaTerkait.push({
         judul: judulManga,
-        href: linkManga,
-        img: gambarManga,
-        informasiTambahan: infoTambahan,
-        benderaNegara: benderaNegara,
+        link: linkManga,
+        gambar: gambarManga,
+        info: infoTambahan,
+        type: benderaNegara,
         kutipan: kutipanManga
       });
     });
@@ -122,6 +122,7 @@ router.get('/:endpoint', async (req, res) => {
 
     res.json(data);
   } catch (error) {
+    console.error(error); // Menambahkan logging untuk debugging
     res.status(500).json({
       status: false,
       message: 'Terjadi kesalahan saat mengambil data.'
