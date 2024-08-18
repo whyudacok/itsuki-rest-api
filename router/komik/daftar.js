@@ -46,7 +46,7 @@ router.get('/:page', async (req, res) => {
       const judul = $(el).find('.post-item-title h4').text().trim();
       const link = $(el).find('a').attr('href');
       const gambar = $(el).find('.post-item-thumb img').attr('src');
-      const jenis = $(el).find('.flag-country-type').attr('class').split(' ').pop();
+      const type = $(el).find('.flag-country-type').attr('class').split(' ').pop();
       const nilai = $(el).find('.rating i').text().trim();
       const warna = $(el).find('.color-label-manga').text().trim();
 
@@ -54,7 +54,7 @@ router.get('/:page', async (req, res) => {
         judul,
         link,
         gambar,
-        jenis,
+        type,
         warna,
         nilai
       });
