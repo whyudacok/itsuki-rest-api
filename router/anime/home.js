@@ -48,9 +48,9 @@ router.get('/', async (req, res) => {
 
             // Extract episode number from the link
             const episodeMatch = link.match(/episode-(\d+)/);
-            let episode = null;
+            let episode = '';
             if (episodeMatch) {
-                episode = parseInt(episodeMatch[1], 10);
+                episode = episodeMatch[1];
             }
 
             results.push({
