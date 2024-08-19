@@ -35,13 +35,13 @@ app.use(cors());
 // Rate limiter untuk setiap router
 const animeRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 menit
-  max: 100, // maksimal 100 request per 15 menit
+  max: 500, // maksimal 500 request per 15 menit
   message: { status: false, message: "Limit permintaan tercapai untuk rute anime ini." }
 });
 
 const mangaRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 menit
-  max: 100, // maksimal 100 request per 15 menit
+  max: 500, // maksimal 500 request per 15 menit
   message: { status: false, message: "Limit permintaan tercapai untuk rute manga ini." }
 });
 
