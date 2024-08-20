@@ -1,28 +1,13 @@
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const NodeCache = require('node-cache');
 const router = express.Router();
 const { aniUrl } = require('../base-url');
-
-// Inisialisasi cache dengan TTL 30 menit (1800 detik)
-const cache = new NodeCache({ stdTTL: 1800 });
 
 router.get('/:studio/:page?', async (req, res) => {
   const { studio, page = 1 } = req.params;
   const encodedStudio = encodeURIComponent(studio);
-  const cacheKey = `studio_${encodedStudio}_page_${page}`;
   const url = `${aniUrl}/studio/${encodedStudio}/page/${page}/`;
-
-  // Cek cache terlebih dahulu
-  const cachedData = cache.get(cacheKey);
-  if (cachedData) {
-    console.log('Cache hit for:', cacheKey);
-    return res.json({
-      status: true,
-      data: cachedData
-    });
-  }
 
   try {
     const response = await axios.get(url, {
@@ -34,7 +19,7 @@ router.get('/:studio/:page?', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
-    // Mengganti href dalam halaman yang di-scrape
+    // Normalize href links
     $(`a[href^="${aniUrl}"]`).each((_, el) => {
       const href = $(el).attr('href');
       $(el).attr('href', href.replace(aniUrl, ''));
@@ -54,23 +39,18 @@ router.get('/:studio/:page?', async (req, res) => {
 
     const totalPages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim(), 10);
 
-    const data = {
-      result,
-      totalPages
-    };
-
-    // Simpan data ke cache
-    cache.set(cacheKey, data);
-
     res.json({
       status: true,
-      data
+      data: {
+        results,
+        totalPages
+      }
     });
   } catch (error) {
-    console.error(error);
-    res.json({
+    console.error('Error:', error.message);
+    res.status(500).json({
       status: false,
-      message: 'Error occurred while scraping data'
+      message: 'Terjadi kesalahan saat mengikis data.'
     });
   }
 });
