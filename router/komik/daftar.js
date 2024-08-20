@@ -1,23 +1,11 @@
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const NodeCache = require('node-cache');
 const { baseUrl } = require('../base-url');
 const router = express.Router();
 
-// Inisialisasi cache dengan TTL 1 hari
-const cache = new NodeCache({ stdTTL: 86400, checkperiod: 120 });
-
 router.get('/:page', async (req, res) => {
   const page = req.params.page;
-  const cacheKey = `daftar-komik-page-${page}`;
-  const cachedData = cache.get(cacheKey);
-
-  if (cachedData) {
-    // Jika data ditemukan di cache, kirim data dari cache
-    return res.json({ success: true, data: cachedData });
-  }
-
   const url = page === '1' ? `${baseUrl}/daftar-komik/` : `${baseUrl}/daftar-komik/page/${page}/`;
 
   try {
@@ -43,20 +31,13 @@ router.get('/:page', async (req, res) => {
 
     const results = [];
     $('.post-item-box').each((_, el) => {
-      const judul = $(el).find('.post-item-title h4').text().trim();
-      const link = $(el).find('a').attr('href');
-      const gambar = $(el).find('.post-item-thumb img').attr('src');
-      const type = $(el).find('.flag-country-type').attr('class').split(' ').pop();
-      const nilai = $(el).find('.rating i').text().trim();
-      const warna = $(el).find('.color-label-manga').text().trim();
-
       results.push({
-        judul,
-        link,
-        gambar,
-        type,
-        warna,
-        nilai
+        judul: $(el).find('.post-item-title h4').text().trim(),
+        link: $(el).find('a').attr('href'),
+        gambar: $(el).find('.post-item-thumb img').attr('src'),
+        type: $(el).find('.flag-country-type').attr('class').split(' ').pop(),
+        warna: $(el).find('.color-label-manga').text().trim(),
+        nilai: $(el).find('.rating i').text().trim()
       });
     });
 
@@ -69,9 +50,6 @@ router.get('/:page', async (req, res) => {
         totalPages
       }
     };
-
-    // Simpan data ke cache
-    cache.set(cacheKey, responseData.data);
 
     // Kirim respons JSON ke client
     res.json(responseData);
