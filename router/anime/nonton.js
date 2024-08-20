@@ -25,15 +25,15 @@ router.get('/:endpoint', async (req, res) => {
       $(el).attr('href', href.replace(aniUrl, ''));
     });
 
-    // Extract iframe src and mirror options
-    const vidutama = $('.video-content #embed_holder #pembed iframe').attr('src');
-    const video = $('select.mirror option').map((_, element) => {
-      const value = $(element).attr('value');
-      const decodedValue = value ? Buffer.from(value, 'base64').toString('utf-8') : '';
-      const iframeSrc = cheerio.load(decodedValue)('iframe').attr('src');
-      const server = $(element).text().trim();
-      return iframeSrc ? { label: server, src: iframeSrc } : null;
-    }).get();
+const vidutama = $('.video-content #embed_holder #pembed iframe').attr('src');
+const video = $('select.mirror option').map((_, element) => {
+  const value = $(element).attr('value');
+  const decodedValue = value ? Buffer.from(value, 'base64').toString('utf-8') : '';
+  const iframeSrc = cheerio.load(decodedValue)('iframe').attr('src');
+  const server = $(element).text().trim();
+  return iframeSrc ? { server, src: iframeSrc } : null;
+}).get();
+
 
     // Extract episode list
     const episodes = $('.episodelist ul li a').map((_, el) => {
