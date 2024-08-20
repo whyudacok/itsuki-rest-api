@@ -18,7 +18,7 @@ router.get('/:karakter/:page', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
-    // Ganti tautan dengan tautan relatif
+    // Replace links with relative paths
     $(`a[href^="${aniUrl}"]`).each((_, el) => {
       const href = $(el).attr('href');
       $(el).attr('href', href.replace(aniUrl, ''));
@@ -26,34 +26,33 @@ router.get('/:karakter/:page', async (req, res) => {
 
     const results = [];
 
-    $('div.listupd article.bs').each((_, elemen) => {
-      const tautan = $(elemen).find('div.bsx a').attr('href') || '';
-      const jenis = $(elemen).find('div.typez').text().trim() || '';
-      const episode = $(elemen).find('span.epx').text().trim() || '';
-      const gambar = $(elemen).find('img').attr('src') || '';
-      const judul = $(elemen).find('h2[itemprop="headline"]').text().trim() || '';
-
+    $('div.listupd article.bs').each((_, el) => {
       results.push({
-        tautan,
-        jenis,
-        episode,
-        gambar,
-        judul
+        link: $(el).find('div.bsx a').attr('href') || '',
+        jenis: $(el).find('div.typez').text().trim() || '',
+        episode: $(el).find('span.epx').text().trim() || '',
+        gambar: $(el).find('img').attr('src') || '',
+        judul: $(el).find('h2[itemprop="headline"]').text().trim() || ''
       });
     });
 
-    const totalPages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim(), 10);
+    const totalPagesText = $('.pagination a.page-numbers').eq(-2).text().trim();
+    const totalPages = totalPagesText ? parseInt(totalPagesText, 10) : 0;
 
     res.json({
       status: true,
-      results,
-      totalPages
+      data: {
+        results: results.length > 0 ? results : [],
+        totalPages
+      }
     });
+
   } catch (error) {
     console.error(error);
     res.json({
       status: false,
-      pesan: 'Terjadi kesalahan saat mengambil data.'
+      data: {},
+      message: 'Terjadi kesalahan saat mengambil data.'
     });
   }
 });
