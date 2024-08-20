@@ -1,29 +1,14 @@
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const NodeCache = require('node-cache');
 const router = express.Router();
 const { aniUrl } = require('../base-url');
-
-// Inisialisasi cache dengan TTL 10 menit (600 detik)
-const cache = new NodeCache({ stdTTL: 600 });
 
 router.get('/:tahun', async (req, res) => {
   const { tahun } = req.params;
   const url = `${aniUrl}/musim/${tahun}/`;
 
-  console.log('Mengambil URL:', url);
-
-  // Cek cache terlebih dahulu
-  const cacheKey = `musim_${tahun}`;
-  const cachedData = cache.get(cacheKey);
-  if (cachedData) {
-    console.log('Cache hit');
-    return res.json({
-      status: true,
-      data: cachedData
-    });
-  }
+  console.log('Fetching URL:', url);
 
   try {
     const response = await axios.get(url, {
@@ -32,18 +17,20 @@ router.get('/:tahun', async (req, res) => {
       }
     });
 
-    console.log('Respon diterima');
+    console.log('Response received');
 
     const html = response.data;
     const $ = cheerio.load(html);
+
+    // Update all hrefs starting with aniUrl
     $(`a[href^="${aniUrl}"]`).each((_, el) => {
       const href = $(el).attr('href');
       $(el).attr('href', href.replace(aniUrl, ''));
     });
 
-    // Cek apakah halaman dimuat dengan benar
+    // Check if page structure is loaded correctly
     if (!$('.newseason').length) {
-      throw new Error('Struktur halaman telah berubah');
+      throw new Error('Page structure has changed');
     }
 
     const musim = $('.newseason h1').text().trim();
@@ -59,13 +46,10 @@ router.get('/:tahun', async (req, res) => {
       const alternatif = $(ele).find('.left .alternative').text().trim() || '';
       const rating = $(ele).find('.right.blue span').text().trim() || '';
       const deskripsi = $(ele).find('.desc p').text().trim() || '';
-      const tagList = [];
-
-      $(ele).find('.card-info-bottom a').each((_, tagElement) => {
-        const tagLink = $(tagElement).attr('href');
-        const tagText = $(tagElement).text().trim();
-        tagList.push({ link: tagLink, tag: tagText });
-      });
+      const tags = $(ele).find('.card-info-bottom a').map((_, tagElement) => ({
+        link: $(tagElement).attr('href'),
+        tag: $(tagElement).text().trim()
+      })).get();
 
       daftarSeries.push({
         link,
@@ -77,26 +61,21 @@ router.get('/:tahun', async (req, res) => {
         alternatif,
         rating,
         deskripsi,
-        tags: tagList
+        tags
       });
     });
 
-    console.log('Data berhasil diparsing');
-
-    const data = { musim, daftarSeries };
-
-    // Simpan data ke cache
-    cache.set(cacheKey, data);
+    console.log('Data parsed successfully');
 
     res.json({
       status: true,
-      data
+      data: { musim, daftarSeries }
     });
   } catch (error) {
-    console.error('Terjadi kesalahan:', error.message);
+    console.error('Error occurred:', error.message);
     res.json({
       status: false,
-      pesan: 'Terjadi kesalahan saat mengambil data.'
+      message: 'An error occurred while fetching data.'
     });
   }
 });
