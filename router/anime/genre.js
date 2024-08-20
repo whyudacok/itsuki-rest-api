@@ -15,37 +15,30 @@ router.get('/:genre/:page', async (req, res) => {
       }
     });
 
-    const html = response.data;
-    const $ = cheerio.load(html);
+    const $ = cheerio.load(response.data);
 
+    // Update all hrefs starting with aniUrl
     $(`a[href^="${aniUrl}"]`).each((_, el) => {
       const href = $(el).attr('href');
       $(el).attr('href', href.replace(aniUrl, ''));
     });
 
-    const animeList = [];
+    // Extract anime data
+    const animeList = $('div.listupd article.bs').map((_, el) => ({
+      link: $(el).find('div.bsx a').attr('href') || '',
+      jenis: $(el).find('div.typez').text().trim() || '',
+      episode: $(el).find('span.epx').text().trim() || '',
+      gambar: $(el).find('img').attr('src') || '',
+      judul: $(el).find('h2[itemprop="headline"]').text().trim() || ''
+    })).get();
 
-    $('div.listupd article.bs').each((_, el) => {
-      const link = $(el).find('div.bsx a').attr('href') || '';
-      const jenis = $(el).find('div.typez').text().trim() || '';
-      const episode = $(el).find('span.epx').text().trim() || '';
-      const gambar = $(el).find('img').attr('src') || '';
-      const judul = $(el).find('h2[itemprop="headline"]').text().trim() || '';
-
-      animeList.push({
-        link,
-        jenis,
-        episode,
-        gambar,
-        judul
-      });
-    });
-
-    const totalPages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim()) || 0;
+    // Extract total pages
+    const totalPagesText = $('.pagination a.page-numbers').eq(-2).text().trim();
+    const totalPages = totalPagesText ? parseInt(totalPagesText, 10) : 0;
 
     res.json({
       status: true,
-      result: animeList,
+      result: animeList.length > 0 ? animeList : [],
       totalPages
     });
 
@@ -53,6 +46,7 @@ router.get('/:genre/:page', async (req, res) => {
     console.error(error);
     res.status(500).json({
       status: false,
+      data: {},  // Include empty data object as per your requirements
       message: 'Terjadi kesalahan saat mengambil data'
     });
   }
