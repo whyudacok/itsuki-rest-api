@@ -1,12 +1,8 @@
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const NodeCache = require('node-cache');
 const router = express.Router();
 const { aniUrl } = require('../base-url');
-
-// Inisialisasi cache dengan TTL 10 menit
-const cache = new NodeCache({ stdTTL: 600 });
 
 // Fungsi untuk mengekstrak ID YouTube dari URL
 const extractYouTubeID = (url) => {
@@ -19,15 +15,6 @@ router.get('/:endpoint', async (req, res) => {
   const encodedEndpoint = encodeURIComponent(endpoint);
   const url = `${aniUrl}/anime/${encodedEndpoint}/`;
 
-  // Key untuk cache berdasarkan endpoint
-  const cacheKey = `anime_${endpoint}`;
-
-  // Cek apakah data sudah ada di cache
-  const cachedData = cache.get(cacheKey);
-  if (cachedData) {
-    return res.json(cachedData);
-  }
-
   try {
     const response = await axios.get(url, {
       headers: {
@@ -38,7 +25,7 @@ router.get('/:endpoint', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
-    // Update semua href yang diawali dengan aniUrl
+    // Update all hrefs that start with aniUrl
     $(`a[href^="${aniUrl}"]`).each((_, el) => {
       const href = $(el).attr('href');
       $(el).attr('href', href.replace(aniUrl, ''));
@@ -49,20 +36,22 @@ router.get('/:endpoint', async (req, res) => {
 
     const data = {
       status: true,
-      rating: $('meta[itemprop="ratingValue"]').attr('content'),
-      trailer: trailerID,
-      title: $('h1.entry-title[itemprop="name"]').text().trim(),
-      images: $('div.thumb img').attr('src'),
-      info: {},
-      genre: [],
-      sinopsis: $('div.entry-content[itemprop="description"] p').text().trim(),
-      eplister: [],
-      lastEpisode: {
-        link: $('div.inepcx a').eq(1).attr('href'),
-        title: $('div.inepcx span.epcurlast').text().trim()
-      },
-      downloads: [],
-      recommendations: []
+      data: {
+        rating: $('meta[itemprop="ratingValue"]').attr('content') || '',
+        trailer: trailerID,
+        title: $('h1.entry-title[itemprop="name"]').text().trim() || '',
+        images: $('div.thumb img').attr('src') || '',
+        info: {},
+        genre: [],
+        sinopsis: $('div.entry-content[itemprop="description"] p').text().trim() || '',
+        eplister: [],
+        lastEpisode: {
+          link: $('div.inepcx a').eq(1).attr('href') || '',
+          title: $('div.inepcx span.epcurlast').text().trim() || ''
+        },
+        downloads: [],
+        recommendations: []
+      }
     };
 
     // Menyaring informasi tambahan
@@ -75,62 +64,52 @@ router.get('/:endpoint', async (req, res) => {
       const href = $(element).find('a').attr('href');
 
       if (key) {
-        data.info[key] = value;
+        data.data.info[key] = value;
         if (href) {
-          data.info[`${key}_link`] = href;
+          data.data.info[`${key}_link`] = href;
         }
       }
     });
 
     // Menyaring genre
     $('div.genxed a[rel="tag"]').each((_, element) => {
-      const genre = {
-        link: $(element).attr('href'),
-        name: $(element).text().trim()
-      };
-      data.genre.push(genre);
+      data.data.genre.push({
+        link: $(element).attr('href') || '',
+        name: $(element).text().trim() || ''
+      });
     });
 
     // Menyaring daftar episode
     $('div.eplister ul li').each((_, element) => {
-      const epData = {
-        link: $(element).find('a').attr('href'),
-        title: $(element).find('div.epl-title').text().trim(),
-        epnum: $(element).find('div.epl-num').text().trim(),
-        date: $(element).find('div.epl-date').text().trim()
-      };
-      data.eplister.push(epData);
+      data.data.eplister.push({
+        link: $(element).find('a').attr('href') || '',
+        title: $(element).find('div.epl-title').text().trim() || '',
+        epnum: $(element).find('div.epl-num').text().trim() || '',
+        date: $(element).find('div.epl-date').text().trim() || ''
+      });
     });
 
     // Menyaring link download
     $('div.soraurlx').each((_, element) => {
       const resolution = $(element).find('strong').text().trim();
-      const links = [];
+      const links = $(element).find('a').map((_, el) => ({
+        link: $(el).attr('href') || '',
+        title: $(el).text().trim() || ''
+      })).get();
 
-      $(element).find('a').each((_, el) => {
-        links.push({
-          link: $(el).attr('href'),
-          title: $(el).text().trim()
-        });
-      });
-
-      data.downloads.push({ server: resolution, links });
+      data.data.downloads.push({ server: resolution, links });
     });
 
     // Menyaring rekomendasi
     $('div.listupd article').each((_, element) => {
-      const recommendation = {
-        link: $(element).find('a').attr('href'),
-        type: $(element).find('div.typez').text().trim(),
-        epx: $(element).find('div.bt span.epx').text().trim(),
-        img: $(element).find('img').attr('src'),
-        title: $(element).find('h2[itemprop="headline"]').text().trim()
-      };
-      data.recommendations.push(recommendation);
+      data.data.recommendations.push({
+        link: $(element).find('a').attr('href') || '',
+        type: $(element).find('div.typez').text().trim() || '',
+        epx: $(element).find('div.bt span.epx').text().trim() || '',
+        img: $(element).find('img').attr('src') || '',
+        title: $(element).find('h2[itemprop="headline"]').text().trim() || ''
+      });
     });
-
-    // Simpan data ke cache sebelum merespons ke client
-    cache.set(cacheKey, data);
 
     res.json(data);
 
@@ -138,6 +117,7 @@ router.get('/:endpoint', async (req, res) => {
     console.error(error);
     res.status(500).json({
       status: false,
+      data: {},
       message: 'Terjadi kesalahan saat mengambil data'
     });
   }
