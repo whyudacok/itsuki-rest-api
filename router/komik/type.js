@@ -22,28 +22,15 @@ router.get('/:type/:page', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
-    // Update semua href yang diawali dengan base URL
-    $(`a[href^="${baseUrl}"]`).each((_, el) => {
-      const href = $(el).attr('href');
-      $(el).attr('href', href.replace(baseUrl, ''));
-    });
-
     const results = [];
     $('.post-item-box').each((_, el) => {
-      const link = $(el).find('a').attr('href');
-      const type = $(el).find('.flag-country-type').attr('class').split(' ').pop();
-      const gambar = $(el).find('.post-item-thumb img').attr('src');
-      const judul = $(el).find('.post-item-title h4').text().trim();
-      const nilai = $(el).find('.rating i').text().trim();
-      const warna = $(el).find('.color-label-manga').text().trim();
-
       results.push({
-        link,
-        type,
-        gambar,
-        judul,
-        nilai,
-        warna
+        link: $(el).find('a').attr('href'),
+        type: $(el).find('.flag-country-type').attr('class').split(' ').pop(),
+        gambar: $(el).find('.post-item-thumb img').attr('src'),
+        judul: $(el).find('.post-item-title h4').text().trim(),
+        nilai: $(el).find('.rating i').text().trim(),
+        warna: $(el).find('.color-label-manga').text().trim()
       });
     });
 
