@@ -38,15 +38,17 @@ router.get('/:genre/:page', async (req, res) => {
 
     res.json({
       status: true,
-      result: animeList.length > 0 ? animeList : [],
-      totalPages
+      data: { // Ensure data is always present
+        result: animeList.length > 0 ? animeList : [],
+        totalPages
+      }
     });
 
   } catch (error) {
     console.error(error);
     res.status(500).json({
       status: false,
-      data: {},  // Include empty data object as per your requirements
+      data: {}, // Include empty data object
       message: 'Terjadi kesalahan saat mengambil data'
     });
   }
