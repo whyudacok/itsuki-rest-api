@@ -54,15 +54,12 @@ router.get('/:endpoint', async (req, res) => {
       episodeNumber: $('meta[itemprop="episodeNumber"]').attr('content'),
       episodeExt: $('span.epx').text().trim(),
       updateDate: $('span.updated').text().trim(),
-      allLink: $('span.year a').attr('href'),
-      allJudul: $('span.year a').text().trim(),
       previous: $('div.naveps.bignav a[aria-label="prev"]').attr('href'),
       prevText: $('div.naveps.bignav a[aria-label="prev"] span.tex').text().trim(),
       allEpisode: $('div.naveps.bignav div.nvs.nvsc a').attr('href'),
       allEpText: $('div.naveps.bignav div.nvs.nvsc a span.tex').text().trim(),
       next: $('div.naveps.bignav a[aria-label="next"]').attr('href'),
       nextText: $('div.naveps.bignav a[aria-label="next"] span.tex').text().trim(),
-      download: $('div.releases h3').text().trim(),
       servers: $('div.soraurlx').map((_, el) => {
         const server = $(el).find('strong').text().trim();
         const links = $(el).find('a').map((_, a) => ({
