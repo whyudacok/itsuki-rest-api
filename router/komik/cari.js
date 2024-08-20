@@ -37,9 +37,11 @@ router.get('/:endpoint/:page', async (req, res) => {
     const totalPages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim());
 
     const data = {
-      status: true,
-      results,
-      totalPages
+      success: true,
+      data: {
+        results,
+        totalPages
+      }
     };
 
     res.json(data);
