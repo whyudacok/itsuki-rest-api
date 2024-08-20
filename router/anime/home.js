@@ -1,23 +1,11 @@
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const NodeCache = require('node-cache');
 const router = express.Router();
-const { aniUrl } = require('../base-url'); // Anggap aniUrl adalah 'https://tv.animisme.net/'
-
-// Inisialisasi cache dengan TTL 30 menit (1800 detik)
-const cache = new NodeCache({ stdTTL: 1800 });
+const { aniUrl } = require('../base-url'); // Assume aniUrl is 'https://tv.animisme.net/'
 
 router.get('/', async (req, res) => {
-    const url = aniUrl; // Gunakan aniUrl sebagai URL dasar
-
-    // Cek cache terlebih dahulu
-    const cacheKey = 'anime_list';
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-        console.log('Cache hit');
-        return res.json(cachedData);
-    }
+    const url = aniUrl; // Use aniUrl as the base URL
 
     try {
         const response = await axios.get(url, {
@@ -30,28 +18,25 @@ router.get('/', async (req, res) => {
         const $ = cheerio.load(html);
 
         const results = [];
-        
-        $('div.bsx').each((index, element) => {
+
+        $('div.bsx').each((_, element) => {
             const article = $(element).closest('article.bs');
-            let link = $(element).find('a').attr('href');
-            const jenis = $(element).find('div.typez').text().trim();
-            const judul = $(element).find('div.tt').text().trim();
-            let gambar = $(element).find('img').attr('src');
+            let link = $(element).find('a').attr('href') || '';
+            const jenis = $(element).find('div.typez').text().trim() || '';
+            const judul = $(element).find('div.tt').text().trim() || '';
+            let gambar = $(element).find('img').attr('src') || '';
 
             // Replace the domain in the image URL
             if (gambar) {
                 gambar = gambar.replace('tv.animisme.net/wp-content/uploads', 'animasu.cc/wp-content/uploads');
             }
 
-            // Remove the domain part (https://tv.animisme.net/)
+            // Remove the domain part from the link
             link = link.replace(aniUrl, '');
 
             // Extract episode number from the link
             const episodeMatch = link.match(/episode-(\d+)/);
-            let episode = '';
-            if (episodeMatch) {
-                episode = episodeMatch[1];
-            }
+            const episode = episodeMatch ? episodeMatch[1] : '';
 
             results.push({
                 link,
@@ -62,16 +47,19 @@ router.get('/', async (req, res) => {
             });
         });
 
-        const data = { status: true, results };
-
-        // Simpan data ke cache
-        cache.set(cacheKey, data);
-
-        res.json(data);
+        res.json({
+            status: true,
+            results: results.length > 0 ? results : [], // Ensure results is always an array
+            totalPages: 0 // Total pages not computed; add if needed
+        });
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ status: false, message: 'Terjadi kesalahan saat mengambil data' });
+        res.status(500).json({
+            status: false,
+            data: {}, // Include empty data object as per your requirements
+            message: 'Terjadi kesalahan saat mengambil data'
+        });
     }
 });
 
