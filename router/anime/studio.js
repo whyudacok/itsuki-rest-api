@@ -32,8 +32,8 @@ router.get('/:studio/:page?', async (req, res) => {
         link: $(el).find('div.bsx a').attr('href') || '',
         type: $(el).find('div.typez').text().trim() || '',
         episodes: $(el).find('span.epx').text().trim() || '',
-        image: $(el).find('img').attr('src') || '',
-        title: $(el).find('h2[itemprop="headline"]').text().trim() || ''
+        gambar: $(el).find('img').attr('src') || '',
+        judul: $(el).find('h2[itemprop="headline"]').text().trim() || ''
       });
     });
 
