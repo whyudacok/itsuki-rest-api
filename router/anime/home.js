@@ -49,15 +49,17 @@ router.get('/', async (req, res) => {
 
         res.json({
             status: true,
-            results: results.length > 0 ? results : [], // Ensure results is always an array
-            totalPages: 0 // Total pages not computed; add if needed
+            data: {
+                results: results.length > 0 ? results : [], // Ensure results is always an array
+                totalPages: 0 // Total pages not computed; add if needed
+            }
         });
 
     } catch (error) {
         console.error(error);
         res.status(500).json({
             status: false,
-            data: {}, // Include empty data object as per your requirements
+            data: {}, // Include empty data object
             message: 'Terjadi kesalahan saat mengambil data'
         });
     }
