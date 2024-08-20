@@ -8,23 +8,19 @@ router.get('/:page', async (req, res) => {
     const { page } = req.params;
     const { genre = [], status, type, format, season, order, studio } = req.query;
 
-    // Genre query string
-    const genreStr = Array.isArray(genre) 
-        ? genre.map((g, i) => `genre%5B${i}%5D=${g}`).join('&') 
-        : genre ? `genre%5B0%5D=${genre}` : '';
-
     // Helper function to build query string
-    const buildQuery = (key, value) => (value ? `${key}=${value}` : '');
+    const buildQueryString = (key, value) => value ? `${encodeURIComponent(key)}=${encodeURIComponent(value)}` : '';
 
     // Build query string
+    const genreStr = Array.isArray(genre) ? genre.map((g, i) => `genre%5B${i}%5D=${encodeURIComponent(g)}`).join('&') : '';
     const queryStr = [
         genreStr,
-        buildQuery('status', status),
-        buildQuery('type', type),
-        buildQuery('format', format),
-        buildQuery('season', season),
-        buildQuery('order', order),
-        buildQuery('studio', studio)
+        buildQueryString('status', status),
+        buildQueryString('type', type),
+        buildQueryString('format', format),
+        buildQueryString('season', season),
+        buildQueryString('order', order),
+        buildQueryString('studio', studio)
     ].filter(Boolean).join('&');
 
     const url = `${aniUrl}/anime/?page=${page}&${queryStr}`;
@@ -44,35 +40,32 @@ router.get('/:page', async (req, res) => {
             $(el).attr('href', href.replace(aniUrl, ''));
         });
 
-        const results = [];
+        // Extract results
+        const results = $('div.listupd article.bs').map((_, el) => ({
+            link: $(el).find('div.bsx a').attr('href') || '',
+            type: $(el).find('div.typez').text().trim() || '',
+            episodes: $(el).find('span.epx').text().trim() || '',
+            image: $(el).find('img').attr('src') || '',
+            title: $(el).find('h2[itemprop="headline"]').text().trim() || ''
+        })).get();
 
-        $('div.listupd article.bs').each((_, el) => {
-            results.push({
-                link: $(el).find('div.bsx a').attr('href') || '',
-                type: $(el).find('div.typez').text().trim() || '',
-                episodes: $(el).find('span.epx').text().trim() || '',
-                image: $(el).find('img').attr('src') || '',
-                title: $(el).find('h2[itemprop="headline"]').text().trim() || ''
-            });
-        });
-
-        const prevLink = $('.hpage a.l').attr('href') || '';
-        const nextLink = $('.hpage a.r').attr('href') || '';
-
-        const prevPage = prevLink.match(/page=(\d+)/) ? parseInt(prevLink.match(/page=(\d+)/)[1], 10) : null;
-        const nextPage = nextLink.match(/page=(\d+)/) ? parseInt(nextLink.match(/page=(\d+)/)[1], 10) : null;
-
+        // Extract pagination info
+        const extractPageNumber = (link) => link ? parseInt(link.match(/page=(\d+)/)?.[1], 10) : null;
+        const prevPage = extractPageNumber($('.hpage a.l').attr('href'));
+        const nextPage = extractPageNumber($('.hpage a.r').attr('href'));
         const totalPages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim(), 10);
 
         res.json({
             status: true,
-            results,
-            totalPages,
-            prevPage,
-            nextPage
+            data: {
+                results,
+                totalPages,
+                prevPage,
+                nextPage
+            }
         });
     } catch (error) {
-        console.error(error);
+        console.error('Error:', error.message);
         res.status(500).json({ status: false, message: 'Terjadi kesalahan saat mengambil data.' });
     }
 });
