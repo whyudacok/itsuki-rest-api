@@ -37,9 +37,9 @@ const video = $('select.mirror option').map((_, element) => {
 
     // Extract episode list
     const episodes = $('.episodelist ul li a').map((_, el) => {
-      const href = $(el).attr('href') || '';
-      const imgSrc = $(el).find('img').attr('src') || '';
-      const title = $(el).find('.playinfo h3').text().trim() || '';
+      const link = $(el).attr('href') || '';
+      const gambar = $(el).find('img').attr('src') || '';
+      const judul = $(el).find('.playinfo h3').text().trim() || '';
       let eps = $(el).find('.playinfo span').text().trim() || '';
       eps = eps.includes('-') ? eps.split('-')[0].trim() : eps;
       return { href, imgSrc, title, eps };
@@ -50,12 +50,12 @@ const video = $('select.mirror option').map((_, element) => {
       vidutama,
       video,
       episodes,
-      title: $('h1.entry-title').text().trim(),
+      judul: $('h1.entry-title').text().trim(),
       episodeNumber: $('meta[itemprop="episodeNumber"]').attr('content'),
       episodeExt: $('span.epx').text().trim(),
       updateDate: $('span.updated').text().trim(),
       allLink: $('span.year a').attr('href'),
-      allTitle: $('span.year a').text().trim(),
+      alljudul: $('span.year a').text().trim(),
       previous: $('div.naveps.bignav a[aria-label="prev"]').attr('href'),
       prevText: $('div.naveps.bignav a[aria-label="prev"] span.tex').text().trim(),
       allEpisodes: $('div.naveps.bignav div.nvs.nvsc a').attr('href'),
@@ -71,11 +71,11 @@ const video = $('select.mirror option').map((_, element) => {
         })).get();
         return { server, links };
       }).get(),
-      imageAnime: $('div.thumb img').attr('src'),
-      animeTitle: $('h2[itemprop="partOfSeries"]').text().trim(),
-      alternateTitle: $('span.alter').text().trim(),
+      gambar: $('div.thumb img').attr('src'),
+      judul: $('h2[itemprop="partOfSeries"]').text().trim(),
+      alternatifjudul: $('span.alter').text().trim(),
       rating: $('div.rating strong').text().trim(),
-      details: $('div.spe span').map((_, el) => {
+      detail: $('div.spe span').map((_, el) => {
         const label = $(el).find('b').text().replace(':', '').trim();
         const value = $(el).find('a').length ? {
           text: $(el).find('a').text().trim(),
@@ -93,7 +93,7 @@ const video = $('select.mirror option').map((_, element) => {
     res.json({ status: true, data });
   } catch (error) {
     console.error('Error occurred:', error.message);
-    res.status(500).json({ status: false, message: 'An error occurred while fetching data.' });
+    res.status(500).json({ status: false, message: 'terjadi kesalahan saat mengambil data.' });
   }
 });
 
