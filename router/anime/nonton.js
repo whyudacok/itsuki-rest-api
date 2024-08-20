@@ -60,7 +60,7 @@ router.get('/:endpoint', async (req, res) => {
       allEpText: $('div.naveps.bignav div.nvs.nvsc a span.tex').text().trim(),
       next: $('div.naveps.bignav a[aria-label="next"]').attr('href'),
       nextText: $('div.naveps.bignav a[aria-label="next"] span.tex').text().trim(),
-      servers: $('div.soraurlx').map((_, el) => {
+      serverdl: $('div.soraurlx').map((_, el) => {
         const server = $(el).find('strong').text().trim();
         const links = $(el).find('a').map((_, a) => ({
           url: $(a).attr('href'),
