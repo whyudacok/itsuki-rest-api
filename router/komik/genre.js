@@ -24,7 +24,7 @@ router.get('/:genre/:page', async (req, res) => {
 
     const mangaList = [];
     $('.post-item-box').each((_, el) => {
-      mangaList.push({
+      results.push({
         link: $(el).find('a').attr('href'),
         jenis: $(el).find('.flag-country-type').attr('class').split(' ').pop(),
         gambar: $(el).find('.post-item-thumb img').attr('src'),
@@ -39,7 +39,7 @@ router.get('/:genre/:page', async (req, res) => {
     res.json({
       success: true,
       data: {
-        mangaList,
+        results,
         totalPages
       }
     });
