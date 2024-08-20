@@ -25,15 +25,15 @@ router.get('/:endpoint', async (req, res) => {
       $(el).attr('href', href.replace(aniUrl, ''));
     });
 
-const vidutama = $('.video-content #embed_holder #pembed iframe').attr('src');
-const video = $('select.mirror option').map((_, element) => {
-  const value = $(element).attr('value');
-  const decodedValue = value ? Buffer.from(value, 'base64').toString('utf-8') : '';
-  const iframeSrc = cheerio.load(decodedValue)('iframe').attr('src');
-  const server = $(element).text().trim();
-  return iframeSrc ? { server, src: iframeSrc } : null;
-}).get();
-
+    // Extract iframe src and mirror options
+    const vidutama = $('.video-content #embed_holder #pembed iframe').attr('src');
+    const video = $('select.mirror option').map((_, element) => {
+      const value = $(element).attr('value');
+      const decodedValue = value ? Buffer.from(value, 'base64').toString('utf-8') : '';
+      const iframeSrc = cheerio.load(decodedValue)('iframe').attr('src');
+      const server = $(element).text().trim();
+      return iframeSrc ? { server, src: iframeSrc } : null;
+    }).get();
 
     // Extract episode list
     const episodes = $('.episodelist ul li a').map((_, el) => {
@@ -42,7 +42,7 @@ const video = $('select.mirror option').map((_, element) => {
       const judul = $(el).find('.playinfo h3').text().trim() || '';
       let eps = $(el).find('.playinfo span').text().trim() || '';
       eps = eps.includes('-') ? eps.split('-')[0].trim() : eps;
-      return { href, imgSrc, title, eps };
+      return { link, gambar, judul, eps };
     }).get();
 
     // Extract additional details
@@ -55,10 +55,10 @@ const video = $('select.mirror option').map((_, element) => {
       episodeExt: $('span.epx').text().trim(),
       updateDate: $('span.updated').text().trim(),
       allLink: $('span.year a').attr('href'),
-      alljudul: $('span.year a').text().trim(),
+      allJudul: $('span.year a').text().trim(),
       previous: $('div.naveps.bignav a[aria-label="prev"]').attr('href'),
       prevText: $('div.naveps.bignav a[aria-label="prev"] span.tex').text().trim(),
-      allEpisodes: $('div.naveps.bignav div.nvs.nvsc a').attr('href'),
+      allEpisode: $('div.naveps.bignav div.nvs.nvsc a').attr('href'),
       allEpText: $('div.naveps.bignav div.nvs.nvsc a span.tex').text().trim(),
       next: $('div.naveps.bignav a[aria-label="next"]').attr('href'),
       nextText: $('div.naveps.bignav a[aria-label="next"] span.tex').text().trim(),
@@ -73,7 +73,7 @@ const video = $('select.mirror option').map((_, element) => {
       }).get(),
       gambar: $('div.thumb img').attr('src'),
       judul: $('h2[itemprop="partOfSeries"]').text().trim(),
-      alternatifjudul: $('span.alter').text().trim(),
+      altJudul: $('span.alter').text().trim(),
       rating: $('div.rating strong').text().trim(),
       detail: $('div.spe span').map((_, el) => {
         const label = $(el).find('b').text().replace(':', '').trim();
