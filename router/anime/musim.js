@@ -34,7 +34,7 @@ router.get('/:tahun', async (req, res) => {
     }
 
     const musim = $('.newseason h1').text().trim();
-    const daftarSeries = [];
+    const results = [];
 
     $('.card').each((_, ele) => {
       const link = $(ele).find('.card-box a').attr('href') || '';
@@ -51,7 +51,7 @@ router.get('/:tahun', async (req, res) => {
         tag: $(tagElement).text().trim()
       })).get();
 
-      daftarSeries.push({
+      results.push({
         link,
         gambar,
         judul,
@@ -69,13 +69,13 @@ router.get('/:tahun', async (req, res) => {
 
     res.json({
       status: true,
-      data: { musim, daftarSeries }
+      data: { musim, results }
     });
   } catch (error) {
     console.error('Error occurred:', error.message);
     res.json({
       status: false,
-      message: 'An error occurred while fetching data.'
+      message: 'Terjadi kesalahan saat mengambil data.'
     });
   }
 });
