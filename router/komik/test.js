@@ -53,8 +53,8 @@ router.get('/:page', async (req, res) => {
 
     const data = {
       status: true,
-      updateKomik,
       Totalpages,
+      updateKomik,
       komikPopuler
     };
 
