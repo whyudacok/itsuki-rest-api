@@ -1,23 +1,13 @@
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const NodeCache = require('node-cache');
 const router = express.Router();
 const { baseUrl } = require('../base-url');
-
-// Create a new cache instance with a TTL of 10 minutes (600 seconds)
-const cache = new NodeCache({ stdTTL: 600 });
 
 router.get('/:endpoint', async (req, res) => {
   const { endpoint } = req.params;
   const encodedEndpoint = encodeURIComponent(endpoint);
   const url = `${baseUrl}/${encodedEndpoint}/`;
-
-  // Check if the data is in cache
-  const cachedData = cache.get(url);
-  if (cachedData) {
-    return res.json(cachedData);
-  }
 
   try {
     const response = await axios.get(url, {
@@ -34,12 +24,6 @@ router.get('/:endpoint', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
-    // Update all hrefs that start with the base URL
-    $(`a[href^="${baseUrl}"]`).each((_, el) => {
-      const href = $(el).attr('href');
-      $(el).attr('href', href.replace(baseUrl, ''));
-    });
-
     const title = $('h1.entry-title').text().trim();
     const prevChapterLink = $('a[rel="prev"]').attr('href');
     const nextChapterLink = $('a[rel="next"]').attr('href');
@@ -55,9 +39,10 @@ router.get('/:endpoint', async (req, res) => {
 
     const chapters = [];
     $('.box-list-chapter li.list-chapter-chapter').each((_, el) => {
-      const chapterText = $(el).find('a').text().trim();
-      const chapterLink = $(el).find('a').attr('href');
-      chapters.push({ chapterText, chapterLink });
+      chapters.push({
+        chapterText: $(el).find('a').text().trim(),
+        chapterLink: $(el).find('a').attr('href')
+      });
     });
 
     const data = {
@@ -70,9 +55,6 @@ router.get('/:endpoint', async (req, res) => {
       chapters,
       allChaptersLink
     };
-
-    // Cache the response data
-    cache.set(url, data);
 
     res.json(data);
   } catch (error) {
