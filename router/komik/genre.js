@@ -22,7 +22,7 @@ router.get('/:genre/:page', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
-    const mangaList = [];
+    const results = [];
     $('.post-item-box').each((_, el) => {
       results.push({
         link: $(el).find('a').attr('href'),
