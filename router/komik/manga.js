@@ -1,23 +1,13 @@
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const NodeCache = require('node-cache');
 const router = express.Router();
 const { baseUrl } = require('../base-url');
-
-// Inisialisasi cache dengan TTL 10 menit
-const cache = new NodeCache({ stdTTL: 600 });
 
 router.get('/:endpoint', async (req, res) => {
   const { endpoint } = req.params;
   const encodedEndpoint = encodeURIComponent(endpoint);
   const url = `${baseUrl}/komik/${encodedEndpoint}/`;
-
-  // Cek cache terlebih dahulu
-  const cachedData = cache.get(url);
-  if (cachedData) {
-    return res.json(cachedData);
-  }
 
   try {
     const response = await axios.get(url, {
@@ -33,12 +23,6 @@ router.get('/:endpoint', async (req, res) => {
 
     const html = response.data;
     const $ = cheerio.load(html);
-
-    // Perbarui href yang dimulai dengan base URL
-    $(`a[href^="${baseUrl}"]`).each((_, el) => {
-      const href = $(el).attr('href');
-      $(el).attr('href', href.replace(baseUrl, ''));
-    });
 
     const judul = $('h1.entry-title').text().trim();
     const thumbnail = $('.thumb img').attr('src');
@@ -71,32 +55,27 @@ router.get('/:endpoint', async (req, res) => {
 
     const mangaTerkait = [];
     $('#similiar li').each((_, el) => {
-      const judulManga = $(el).find('h4 a.series').text().trim();
-      const linkManga = $(el).find('h4 a.series').attr('href');
-      const gambarManga = $(el).find('img').attr('src');
-      const infoTambahan = $(el).find('.info-additional').text().trim();
-      const benderaNegara = $(el).find('.flag-country-type').text().trim();
-      const kutipanManga = $(el).find('.excerpt-similiar').text().trim();
       mangaTerkait.push({
-        judul: judulManga,
-        link: linkManga,
-        gambar: gambarManga,
-        info: infoTambahan,
-        type: benderaNegara,
-        kutipan: kutipanManga
+        judul: $(el).find('h4 a.series').text().trim(),
+        link: $(el).find('h4 a.series').attr('href'),
+        gambar: $(el).find('img').attr('src'),
+        info: $(el).find('.info-additional').text().trim(),
+        type: $(el).find('.flag-country-type').text().trim(),
+        kutipan: $(el).find('.excerpt-similiar').text().trim()
       });
     });
 
     const chapters = [];
     $('.box-list-chapter ul li').each((_, el) => {
-      const judulBab = $(el).find('span a').first().text().trim();
-      const linkBab = $(el).find('span a').first().attr('href');
-      const tanggalBab = $(el).find('.list-chapter-date').text().trim();
-      const linkUnduh = $(el).find('.dl a').attr('href');
-      chapters.push({ judul: judulBab, link: linkBab, tanggal: tanggalBab, linkUnduh });
+      chapters.push({
+        judul: $(el).find('span a').first().text().trim(),
+        link: $(el).find('span a').first().attr('href'),
+        tanggal: $(el).find('.list-chapter-date').text().trim(),
+        linkUnduh: $(el).find('.dl a').attr('href')
+      });
     });
 
-    const data = {
+    res.json({
       status: true,
       judul,
       thumbnail,
@@ -115,12 +94,7 @@ router.get('/:endpoint', async (req, res) => {
       informasiTambahan,
       mangaTerkait,
       chapters
-    };
-
-    // Simpan data ke cache
-    cache.set(url, data);
-
-    res.json(data);
+    });
   } catch (error) {
     console.error(error); // Menambahkan logging untuk debugging
     res.status(500).json({
