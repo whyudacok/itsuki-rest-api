@@ -36,15 +36,17 @@ router.get('/:endpoint/:page', async (req, res) => {
 
     res.json({
       status: true,
-      result: animeList.length > 0 ? animeList : [],
-      totalPages: totalPages || 0
+      data: { // Ensure `data` is always present
+        result: animeList.length > 0 ? animeList : [],
+        totalPages: totalPages || 0
+      }
     });
 
   } catch (error) {
     console.error(error);
     res.status(500).json({
       status: false,
-      data: {},
+      data: {}, // Include empty data object
       message: 'Terjadi kesalahan saat mengambil data'
     });
   }
