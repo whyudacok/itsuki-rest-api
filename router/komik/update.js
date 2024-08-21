@@ -11,6 +11,7 @@ router.get('/:page', async (req, res) => {
   try {
     const response = await axios.get(url, {
       headers: {
+        'Origin': baseUrl,
         'Referer': baseUrl,
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0'
       }
@@ -54,20 +55,24 @@ router.get('/:page', async (req, res) => {
     const Totalpages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim());
 
     const data = {
-      success: true,
-      latestkomik,
       Totalpages,
+      latestkomik,
       komikPopuler
     };
 
     // Kirim respons JSON ke client
-    res.status(200).json(data);
+    res.status(200).json({
+      success: true,
+      data
+    });
   } catch (error) {
     // Kirim respons JSON dengan kesalahan
     res.status(500).json({
       success: false,
-      message: 'Terjadi kesalahan saat mengambil data.',
-      error: error.message
+      data: {
+        message: 'Terjadi kesalahan saat mengambil data.',
+        error: error.message
+      }
     });
   }
 });
