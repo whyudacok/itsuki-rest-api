@@ -22,6 +22,11 @@ router.get('/:endpoint/:page', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
+    $(`a[href^="${baseUrl}"]`).each((_, el) => {
+      const href = $(el).attr('href');
+      $(el).attr('href', href.replace(baseUrl, ''));
+    });
+
     const results = [];
     $('.post-item-box').each((_, el) => {
       results.push({
@@ -37,7 +42,7 @@ router.get('/:endpoint/:page', async (req, res) => {
     const totalPages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim());
 
     const data = {
-      success: true,
+      status: true,
       data: {
         results,
         totalPages
