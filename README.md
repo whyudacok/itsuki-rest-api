@@ -26,8 +26,8 @@
 
 1. **Clone repository**:
     ```bash
-    git clone https://github.com/username/repository.git
-    cd repository
+    git clone https://github.com/whyudacok/itsuki-rest-api.git
+    cd itsuki-rest-api
     ```
 
 2. **Install dependensi**:
