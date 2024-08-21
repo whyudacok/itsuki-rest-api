@@ -3,8 +3,9 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const router = express.Router();
 
+// Rute untuk scraping data artikel
 router.get('/', async (req, res) => {
-  const url = 'https://157.230.44.16/';
+  const url = 'https://157.230.44.16/page/1/';
 
   try {
     const response = await axios.get(url, {
@@ -16,41 +17,58 @@ router.get('/', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
-    // Ambil data ikon sosial
-    const socialIcons = {
-      facebook: $('.share-facebook').attr('href'),
-      twitter: $('.share-twitter').attr('href'),
-      whatsapp: $('.share-whatsapp').attr('href'),
-      telegram: $('.share-telegram').attr('href')
-    };
-
-    // Ambil data film
-    const movies = [];
-    $('.gmr-slider-content').each((index, element) => {
-      const title = $(element).find('.gmr-slide-title a').text().trim();
-      const link = $(element).find('.gmr-slide-title a').attr('href');
-      const imageUrl = $(element).find('img').attr('data-src');
+    // Ambil data artikel
+    const articles = [];
+    $('#gmr-main-load .item').each((index, element) => {
+      const title = $(element).find('.entry-title a').text().trim();
+      const link = $(element).find('.entry-title a').attr('href');
+      const imageUrl = $(element).find('.content-thumbnail img').attr('src');
+      const rating = $(element).find('.gmr-rating-item').text().trim();
+      const duration = $(element).find('.gmr-duration-item').text().trim();
       const quality = $(element).find('.gmr-quality-item a').text().trim();
 
-      movies.push({
+      articles.push({
         title,
         link,
         imageUrl,
+        rating,
+        duration,
         quality
       });
     });
 
-    // Kirim respon JSON dengan data ikon sosial dan film
+    // Ambil informasi pagination
+    const pagination = [];
+    $('.pagination .page-numbers').each((index, element) => {
+      const text = $(element).text().trim();
+      const href = $(element).attr('href');
+      if (text && !text.includes('…')) {
+        let pageNumber = parseInt(text.replace(/,/g, ''), 10);
+        pagination.push({
+          page: pageNumber,
+          url: href
+        });
+      }
+    });
+
+    // Temukan nomor halaman tertinggi
+    const highestPageNumber = Math.max(...pagination.map(p => p.page));
+
+    // Kirim respon JSON dengan data artikel dan informasi pagination
     res.json({
-      status: true,
-      socialIcons,
-      movies
+      success: true,
+      data: {
+        articles,
+        pagination: {
+          highestPageNumber
+        }
+      }
     });
   } catch (error) {
+    console.error('Error scraping data:', error);
     res.status(500).json({
-      status: false,
-      message: 'Terjadi kesalahan saat mengambil data.',
-      error: error.message
+      success: false,
+      message: 'Error scraping data'
     });
   }
 });
