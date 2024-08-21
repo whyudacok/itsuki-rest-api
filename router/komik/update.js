@@ -64,10 +64,10 @@ router.get('/:page', async (req, res) => {
     };
 
     // Kirim respons JSON ke client
-   res.json(data);
-  } catch (error) {
-    console.error(error);  // Log the error
-    res.status(500).json({ error: error.message });  // Send error details in JSON
+   res.status(500).json({
+      status: false,
+      message: 'Terjadi kesalahan saat mengambil data.'
+    });
   }
 });
 
