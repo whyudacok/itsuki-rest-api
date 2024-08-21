@@ -42,7 +42,7 @@ router.get('/:studio/:page?', async (req, res) => {
     res.json({
       status: true,
       data: {
-        results,
+        result,
         totalPages
       }
     });
