@@ -112,7 +112,7 @@ Animisme adalah tempat kumpulan anime batch & movie bahasa Indonesia.
   
   `/api/anime/anime/:endpoint`
   
-      Contoh: [https://cihuyy-api.vercel.app/api/anime/anime/boku-no-pico/](https://cihuyy-api.vercel.app/api/anime/anime/boku-no-pico/)
+  Contoh: [https://cihuyy-api.vercel.app/api/anime/anime/boku-no-pico/](https://cihuyy-api.vercel.app/api/anime/anime/boku-no-pico/)
   
 - #### Detail episode 
   Mendapatkan Episode anime
