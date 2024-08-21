@@ -9,26 +9,41 @@ router.get('/', async (req, res) => {
   try {
     const response = await axios.get(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
       }
     });
 
     const html = response.data;
     const $ = cheerio.load(html);
 
-    const metaTitle = $('title').text().trim(); // Extract meta title
+    // Ambil elemen dengan class 'col-md-125' dan itemtype 'https://schema.org/Movie'
+    const movieDiv = $('.col-md-125[itemscope][itemtype="https://schema.org/Movie"]');
 
-    const data = {
-      metaTitle
+    // Scraping data dari elemen tersebut
+    const title = movieDiv.find('h2.entry-title a').text().trim();
+    const link = movieDiv.find('h2.entry-title a').attr('href');
+    const imageUrl = movieDiv.find('img').attr('src');
+    const rating = movieDiv.find('.gmr-rating-item').text().trim();
+    const releaseDate = movieDiv.find('time[itemprop="dateCreated"]').attr('datetime');
+    const director = movieDiv.find('[itemprop="director"] [itemprop="name"]').text().trim();
+    const quality = movieDiv.find('.gmr-quality-item').text().trim();
+
+    // Format data yang akan dikembalikan
+    const movieData = {
+      title,
+      link,
+      imageUrl,
+      rating,
+      releaseDate,
+      director,
+      quality
     };
 
-    // Send JSON response with status and success
     res.json({
       status: true,
-      data
+      data: movieData
     });
   } catch (error) {
-    // Send JSON response with status and error message
     res.status(500).json({
       status: false,
       data: {
