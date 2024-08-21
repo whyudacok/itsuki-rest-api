@@ -44,7 +44,7 @@ router.get('/:page', async (req, res) => {
     const totalPages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim());
 
     const responseData = {
-      success: true,
+      status: true,
       data: {
         results,
         totalPages
@@ -54,7 +54,7 @@ router.get('/:page', async (req, res) => {
     // Kirim respons JSON ke client
     res.json(responseData);
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Terjadi kesalahan saat mengambil data.' });
+    res.status(500).json({ status: false, message: 'Terjadi kesalahan saat mengambil data.' });
   }
 });
 
