@@ -81,7 +81,7 @@ router.get('/:endpoint', async (req, res) => {
     });
 
     res.json({
-      success: true,
+      status: true,
       judul,
       thumbnail,
       chapterPertama: {
