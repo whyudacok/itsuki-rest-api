@@ -4,8 +4,9 @@ const cheerio = require('cheerio');
 const router = express.Router();
 
 // Rute untuk scraping data artikel
-router.get('/', async (req, res) => {
-  const url = 'https://157.230.44.16/page/1/';
+router.get('/:page', async (req, res) => {
+  const { page } = req.params;
+  const url = `https://157.230.44.16/page/${page}/`;
 
   try {
     const response = await axios.get(url, {
