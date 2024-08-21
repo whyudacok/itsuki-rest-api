@@ -40,7 +40,7 @@ router.get('/:genre/:page', async (req, res) => {
     const totalPages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim());
 
     res.json({
-      success: true,
+      status: true,
       data: {
         results,
         totalPages
