@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/ZeroneDoo/zeronewatch-api">
+  <a href="https://trakteer.id/slynnn">
     <img src="https://i.ibb.co/KwxRnB6/06d91bc4-ac34-47f2-96e5-818bf495cf57-1.jpg" alt="Logo" width="200" height="200">
   </a>
 </p>
@@ -13,7 +13,7 @@
 
 <h1>Daftar Isi</h1>
 
-- [Instalasi](#Cara Instalasi)
+- [Instalasi](#Cara)
 - [Sumber Data](#sumber-data)
     - [Animisme](#animisme)
     - [Komikcast](#komikcast)
