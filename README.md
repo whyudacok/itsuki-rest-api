@@ -176,9 +176,4 @@ Animisme adalah tempat kumpulan anime batch & movie dalam bahasa Indonesia.
   
   Default `page` adalah 1. Contoh: [https://cihuyy-api.vercel.app/api/anime/season/summer-2020/1](https://cihuyy-api.vercel.app/api/anime/season/summer-2020/1)
 
-## Disclaimer
-Proyek ini nggak ada hubungannya sama sekali dengan komikcast.cx atau tv.animisme.net. Ini cuma sekadar wrapper, jadi aku nggak bertanggung jawab atas apapun yang terkait dengan konten di website tersebut.
-
-## Dukung
-Kalau kamu suka sama proyek ini, dukung aku dengan traktir aku di [Trakteer.id](https://trakteer.id/slynnn).dan kasih star, Makasih ya:v🙂‍↕️
 
