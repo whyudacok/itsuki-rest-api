@@ -68,7 +68,7 @@ router.get('/:page', async (req, res) => {
   } catch (error) {
     // Kirim respons JSON dengan kesalahan
     res.status(500).json({
-      success: false,
+      status: false,
       data: {
         message: 'Terjadi kesalahan saat mengambil data.',
         error: error.message
