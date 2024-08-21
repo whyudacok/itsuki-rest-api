@@ -44,7 +44,7 @@ router.get('/:endpoint', async (req, res) => {
     $('.box-list-chapter li').each((_, el) => {
       const chapterLink = $(el).find('a').attr('href');
       const chapterNumber = $(el).find('a').text().match(/\d+/)[0]; // Extract chapter number
-      chapters.push({
+      chapterList.push({
         chapterText: `Chapter ${chapterNumber}`,
         chapterLink
       });
@@ -53,13 +53,13 @@ router.get('/:endpoint', async (req, res) => {
     const data = {
       title,
       shortDescription, // Add short description
-      prevChapterLink,
-      nextChapterLink,
-      downloadLink,
-      images,
       thumbnail,
-      chapters,
-      allChaptersLink
+      prevChapterLink,
+      allChaptersLink,
+      nextChapterLink,
+      images,
+      chapterList,
+      downloadLink
     };
 
     // Send JSON response with status and success
