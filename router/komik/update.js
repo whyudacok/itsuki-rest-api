@@ -62,7 +62,7 @@ router.get('/:page', async (req, res) => {
 
     // Kirim respons JSON ke client
     res.status(200).json({
-      success: true,
+      status: true,
       data
     });
   } catch (error) {
