@@ -3,7 +3,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const router = express.Router();
 
-router.get('/scrape-div', async (req, res) => {
+router.get('/', async (req, res) => {
   const url = 'https://157.230.44.16/';
 
   try {
@@ -16,34 +16,41 @@ router.get('/scrape-div', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
-    // Ambil elemen dengan class 'gmr-slider-content'
-    const movieDiv = $('.gmr-slider-content');
-
-    // Scraping data dari elemen tersebut
-    const title = movieDiv.find('.gmr-slide-title a').text().trim();
-    const link = movieDiv.find('.gmr-slide-title a').attr('href');
-    const imageUrl = movieDiv.find('img').attr('data-src');
-    const quality = movieDiv.find('.gmr-quality-item a').text().trim();
-
-    // Format data yang akan dikembalikan
-    const movieData = {
-      title,
-      link,
-      imageUrl,
-      quality
+    // Ambil data ikon sosial
+    const socialIcons = {
+      facebook: $('.share-facebook').attr('href'),
+      twitter: $('.share-twitter').attr('href'),
+      whatsapp: $('.share-whatsapp').attr('href'),
+      telegram: $('.share-telegram').attr('href')
     };
 
+    // Ambil data film
+    const movies = [];
+    $('.gmr-slider-content').each((index, element) => {
+      const title = $(element).find('.gmr-slide-title a').text().trim();
+      const link = $(element).find('.gmr-slide-title a').attr('href');
+      const imageUrl = $(element).find('img').attr('data-src');
+      const quality = $(element).find('.gmr-quality-item a').text().trim();
+
+      movies.push({
+        title,
+        link,
+        imageUrl,
+        quality
+      });
+    });
+
+    // Kirim respon JSON dengan data ikon sosial dan film
     res.json({
       status: true,
-      data: movieData
+      socialIcons,
+      movies
     });
   } catch (error) {
     res.status(500).json({
       status: false,
-      data: {
-        message: 'Terjadi kesalahan saat mengambil data.',
-        error: error.message
-      }
+      message: 'Terjadi kesalahan saat mengambil data.',
+      error: error.message
     });
   }
 });
