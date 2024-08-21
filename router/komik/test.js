@@ -3,8 +3,8 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-  const url = 'https://nontonfilmgratis.club/';
+router.get('/scrape-div', async (req, res) => {
+  const url = 'https://157.230.44.16/';
 
   try {
     const response = await axios.get(url, {
@@ -16,24 +16,20 @@ router.get('/', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
-    // Ambil elemen dengan class 'col-md-125' dan itemtype 'https://schema.org/Movie'
-    const movieDiv = $('.col-md-125[itemscope="itemscope"][itemtype="https://schema.org/Movie"]');
+    // Ambil elemen dengan class 'gmr-slider-content'
+    const movieDiv = $('.gmr-slider-content');
 
     // Scraping data dari elemen tersebut
-    const title = movieDiv.find('h2.entry-title a').text().trim();
-    const link = movieDiv.find('h2.entry-title a').attr('href');
-    const imageUrl = movieDiv.find('img').attr('src');
-    const rating = movieDiv.find('.gmr-rating-item').text().trim();
-    const director = movieDiv.find('[itemprop="director"] [itemprop="name"]').text().trim();
-    const quality = movieDiv.find('.gmr-quality-item').text().trim();
+    const title = movieDiv.find('.gmr-slide-title a').text().trim();
+    const link = movieDiv.find('.gmr-slide-title a').attr('href');
+    const imageUrl = movieDiv.find('img').attr('data-src');
+    const quality = movieDiv.find('.gmr-quality-item a').text().trim();
 
     // Format data yang akan dikembalikan
     const movieData = {
       title,
       link,
       imageUrl,
-      rating,
-      director,
       quality
     };
 
