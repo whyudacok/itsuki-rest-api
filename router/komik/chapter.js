@@ -27,6 +27,7 @@ router.get('/:endpoint', async (req, res) => {
     });
 
     const title = $('h1.entry-title').text().trim();
+    const shortDescription = $('.short-description').text().trim(); // Get short description
     const prevChapterLink = $('a[rel="prev"]').attr('href');
     const nextChapterLink = $('a[rel="next"]').attr('href');
     const downloadLink = $('.next-prev-box a[target="_blank"]').attr('href');
@@ -40,15 +41,18 @@ router.get('/:endpoint', async (req, res) => {
     const thumbnail = $('.thumb img').attr('src');
 
     const chapters = [];
-    $('.box-list-chapter li.list-chapter-chapter').each((_, el) => {
+    $('.box-list-chapter li').each((_, el) => {
+      const chapterLink = $(el).find('a').attr('href');
+      const chapterNumber = $(el).find('a').text().match(/\d+/)[0]; // Extract chapter number
       chapters.push({
-        chapterText: $(el).find('a').text().trim(),
-        chapterLink: $(el).find('a').attr('href')
+        chapterText: `Chapter ${chapterNumber}`,
+        chapterLink
       });
     });
 
     const data = {
       title,
+      shortDescription, // Add short description
       prevChapterLink,
       nextChapterLink,
       downloadLink,
