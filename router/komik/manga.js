@@ -24,6 +24,11 @@ router.get('/:endpoint', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
+    $(`a[href^="${baseUrl}"]`).each((_, el) => {
+      const href = $(el).attr('href');
+      $(el).attr('href', href.replace(baseUrl, ''));
+    });
+    
     const judul = $('h1.entry-title').text().trim();
     const thumbnail = $('.thumb img').attr('src');
     const linkChapterPertama = $('.hl-firstlast-ch.first-chapter a').attr('href');
@@ -76,7 +81,7 @@ router.get('/:endpoint', async (req, res) => {
     });
 
     res.json({
-      status: true,
+      success: true,
       judul,
       thumbnail,
       chapterPertama: {
