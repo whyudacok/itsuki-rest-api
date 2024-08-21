@@ -13,16 +13,18 @@ router.get('/:endpoint', async (req, res) => {
     const response = await axios.get(url, {
       headers: {
         'Origin': baseUrl,
-        'Cookie': '_ga=GA1.2.826878888.1673844093; _gid=GA1.2.1599003702.1674031831; _gat=1',
         'Referer': baseUrl,
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0'
       }
     });
 
     const html = response.data;
     const $ = cheerio.load(html);
+
+    $(`a[href^="${baseUrl}"]`).each((_, el) => {
+      const href = $(el).attr('href');
+      $(el).attr('href', href.replace(baseUrl, ''));
+    });
 
     const title = $('h1.entry-title').text().trim();
     const prevChapterLink = $('a[rel="prev"]').attr('href');
@@ -56,9 +58,20 @@ router.get('/:endpoint', async (req, res) => {
       allChaptersLink
     };
 
-    res.json(data);
+    // Send JSON response with status and success
+    res.json({
+      status: true,
+      data
+    });
   } catch (error) {
-    res.status(500).send('An error occurred while fetching the data.');
+    // Send JSON response with status and error message
+    res.status(500).json({
+      status: false,
+      data: {
+        message: 'Terjadi kesalahan saat mengambil data.',
+        error: error.message
+      }
+    });
   }
 });
 
