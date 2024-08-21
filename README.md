@@ -179,6 +179,6 @@ Animisme adalah tempat kumpulan anime batch & movie dalam bahasa Indonesia.
 ## Disclaimer
 Proyek ini nggak ada hubungannya sama sekali dengan komikcast.cx atau tv.animisme.net. Ini cuma sekadar wrapper, jadi aku nggak bertanggung jawab atas apapun yang terkait dengan konten di website tersebut.
 
-## Dukungan
-Kalau kamu suka sama proyek ini, dukung aku dengan traktir aku di [Trakteer.id](https://trakteer.id/slynnn). Makasih ya 😊
+## Dukung
+Kalau kamu suka sama proyek ini, dukung aku dengan traktir aku di [Trakteer.id](https://trakteer.id/slynnn).dan kasih star, Makasih ya:v🙂‍↕️
 
