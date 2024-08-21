@@ -13,7 +13,7 @@
 
 <h1>Daftar Isi</h1>
 
-- [Instalasi](#Cara)
+- [Instalasi](#Install)
 - [Sumber Data](#sumber-data)
     - [Animisme](#animisme)
     - [Komikcast](#komikcast)
@@ -23,7 +23,7 @@
 - [Komikcast](https://komikcast.cx)
 - [Animisme](https://tv.animisme.net)
 
-## Cara Instalasi
+### Install
 
 1. **Clone repository**:
     ```bash
@@ -45,7 +45,6 @@
       ```bash
       npm run dev
       ```
-## Komik
 ### Komikcast
 Komikcast menyediakan koleksi komik terlengkap dalam bahasa Indonesia.
 
