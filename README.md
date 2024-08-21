@@ -173,8 +173,8 @@ Animisme adalah tempat kumpulan anime batch & movie dalam bahasa Indonesia.
 - #### Musim Anime
   Untuk mendapatkan anime berdasarkan musim.
   
-  `/api/anime/season/:endpoint/:page`
+  `/api/anime/musim/:endpoint/:page`
   
-  Default `page` adalah 1. Contoh: [https://cihuyy-api.vercel.app/api/anime/season/summer-2020/1](https://cihuyy-api.vercel.app/api/anime/season/summer-2020/1)
+  Default `page` adalah 1. Contoh: [https://cihuyy-api.vercel.app/api/anime/musim/summer-2020/1](https://cihuyy-api.vercel.app/api/anime/musim/summer-2020/1)
 
 
