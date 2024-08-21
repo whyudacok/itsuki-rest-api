@@ -175,6 +175,6 @@ Animisme adalah tempat kumpulan anime batch & movie dalam bahasa Indonesia.
   
   `/api/anime/musim/:endpoint/`
   
- Contoh: [https://cihuyy-api.vercel.app/api/anime/musim/summer-2020/](https://cihuyy-api.vercel.app/api/anime/musim/summer-2020/)
+  Contoh: [https://cihuyy-api.vercel.app/api/anime/musim/summer-2020/](https://cihuyy-api.vercel.app/api/anime/musim/summer-2020/)
 
 
