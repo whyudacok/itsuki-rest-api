@@ -7,8 +7,7 @@
 <h3 align="center">Itsuki Rest API</h3>
 
 <p align="center">
-  <b>Restful API untuk Komik & Anime Subtitle Indonesia</b><br />
-  <span>Dibuat untuk belajar pengembangan API</span><br />
+  <b>Restful API untuk Komik & Anime Subtitle Indonesia</b>
 </p>
 
 <h1>Daftar Isi</h1>
@@ -63,7 +62,7 @@ Komikcast menyediakan koleksi komik terlengkap dalam bahasa Indonesia.
   Default `page` adalah 1. Contoh: [https://cihuyy-api.vercel.app/api/komik/daftar/1](https://cihuyy-api.vercel.app/api/komik/daftar/1)
   
 - #### Detail Tipe Komik
-  Untuk mendapatkan daftar berdasarkan tipe, seperti manga atau manhua.
+  Untuk mendapatkan daftar berdasarkan tipe, seperti (manga, manhua, manhwa).
   
   `/api/komik/type/:endpoint/:page`
   
