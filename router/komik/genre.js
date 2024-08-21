@@ -13,14 +13,17 @@ router.get('/:genre/:page', async (req, res) => {
       headers: {
         'Origin': baseUrl,
         'Referer': baseUrl,
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0'
       }
     });
 
     const html = response.data;
     const $ = cheerio.load(html);
+
+    $(`a[href^="${baseUrl}"]`).each((_, el) => {
+      const href = $(el).attr('href');
+      $(el).attr('href', href.replace(baseUrl, ''));
+    });
 
     const results = [];
     $('.post-item-box').each((_, el) => {
