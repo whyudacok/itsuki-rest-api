@@ -46,7 +46,7 @@ const mangaRateLimiter = rateLimit({
 });
 
 // Anime routes dengan rate limiter
-app.use('/api/anime/home', animeRateLimiter, homeRoute);
+app.use('/api/anime/latest', animeRateLimiter, homeRoute);
 app.use('/api/anime/anime', animeRateLimiter, animeRoute);
 app.use('/api/anime/nonton', animeRateLimiter, nontonRoute);
 app.use('/api/anime/anilist', animeRateLimiter, anilistRoute);
@@ -62,7 +62,7 @@ app.use('/api/komik/manga', mangaRateLimiter, mangaRoute);
 app.use('/api/komik/chapter', mangaRateLimiter, chapterRoute);
 app.use('/api/komik/cari', mangaRateLimiter, cariRoute);
 app.use('/api/komik/type', mangaRateLimiter, typeRoute);
-app.use('/api/komik/update', mangaRateLimiter, updateRoute);
+app.use('/api/komik/latest', mangaRateLimiter, updateRoute);
 app.use('/api/komik/genre', mangaRateLimiter, mangaGenreRoute);
 app.use('/api/komik/daftar', mangaRateLimiter, daftarRoute);
 app.use('/api/komik/search', mangaRateLimiter, searchRoute);
