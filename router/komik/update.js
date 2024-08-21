@@ -57,7 +57,7 @@ router.get('/:page', async (req, res) => {
     const Totalpages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim());
 
     const data = {
-      status: true,
+      success: true,
       latestkomik,
       Totalpages,
       komikPopuler
