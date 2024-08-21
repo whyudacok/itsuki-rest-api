@@ -40,7 +40,7 @@ router.get('/:endpoint', async (req, res) => {
 
     const thumbnail = $('.thumb img').attr('src');
 
-    const chapters = [];
+    const chapterList = [];
     $('.box-list-chapter li').each((_, el) => {
       const chapterLink = $(el).find('a').attr('href');
       const chapterNumber = $(el).find('a').text().match(/\d+/)[0]; // Extract chapter number
