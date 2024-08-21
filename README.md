@@ -13,7 +13,7 @@
 
 <h1>Daftar Isi</h1>
 
-- [Instalasi](#instalasi)
+- [Instalasi](#Cara Instalasi)
 - [Sumber Data](#sumber-data)
     - [Animisme](#animisme)
     - [Komikcast](#komikcast)
@@ -23,6 +23,28 @@
 - [Komikcast](https://komikcast.cx)
 - [Animisme](https://tv.animisme.net)
 
+## Cara Instalasi
+
+1. **Clone repository**:
+    ```bash
+    git clone https://github.com/username/repository.git
+    cd repository
+    ```
+
+2. **Install dependensi**:
+    ```bash
+    npm install
+    ```
+
+3. **Jalankan aplikasi**:
+    - Untuk memulai aplikasi:
+      ```bash
+      npm start
+      ```
+    - Untuk menjalankan aplikasi dalam mode pengembangan:
+      ```bash
+      npm run dev
+      ```
 ## Komik
 ### Komikcast
 Komikcast menyediakan koleksi komik terlengkap dalam bahasa Indonesia.
@@ -163,4 +185,5 @@ Animisme adalah tempat kumpulan anime batch & movie dalam bahasa Indonesia.
 Proyek ini nggak ada hubungannya sama sekali dengan komikcast.cx atau tv.animisme.net. Ini cuma sekadar wrapper, jadi aku nggak bertanggung jawab atas apapun yang terkait dengan konten di website tersebut.
 
 ## Dukungan
-Kalau kamu suka sama proyek ini, dukung aku dengan traktir aku di [Trakteer.id]([https://trakteer.id](https://trakteer.id/slynnn)). Makasih ya 😊
+Kalau kamu suka sama proyek ini, dukung aku dengan traktir aku di [Trakteer.id](https://trakteer.id/slynnn). Makasih ya 😊
+
