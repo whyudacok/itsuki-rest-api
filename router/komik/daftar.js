@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/:page', async (req, res) => {
   const page = req.params.page;
-  const url = page === '2' ? `${baseUrl}/daftar-komik/` : `${baseUrl}/daftar-komik/page/${page}/`;
+  const url = page === '1' ? `${baseUrl}/daftar-komik/page/2/` : `${baseUrl}/daftar-komik/page/${page}/`;
 
   try {
     const response = await axios.get(url, {
