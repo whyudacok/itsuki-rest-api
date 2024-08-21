@@ -22,9 +22,14 @@ router.get('/:page', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
-    const updateKomik = [];
+    $(`a[href^="${baseUrl}"]`).each((_, el) => {
+      const href = $(el).attr('href');
+      $(el).attr('href', href.replace(baseUrl, ''));
+    });
+
+    const latestkomik = [];
     $('.post-item-box').each((_, el) => {
-      updateKomik.push({
+      latestkomik.push({
         link: $(el).find('a').attr('href'),
         type: $(el).find('.flag-country-type').attr('class').split(' ').pop(),
         gambar: $(el).find('.post-item-thumb img').attr('src'),
@@ -53,16 +58,18 @@ router.get('/:page', async (req, res) => {
 
     const data = {
       status: true,
-      updateKomik,
+      latestkomik,
       Totalpages,
       komikPopuler
     };
 
     // Kirim respons JSON ke client
-    res.json(data);
+   res.json(data);
   } catch (error) {
-    res.status(500).send('Terjadi kesalahan saat mengambil data.');
+    console.error(error);  // Log the error
+    res.status(500).json({ error: error.message });  // Send error details in JSON
   }
 });
 
 module.exports = router;
+      
