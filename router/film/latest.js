@@ -26,9 +26,9 @@ router.get('/:page', async (req, res) => {
       results.push({
         title: $(el).find('.entry-title a').text().trim(),
         link: $(el).find('.entry-title a').attr('href'),
-        imageUrl: $(el).find('.content-thumbnail img').attr('src'),
+        gambar: $(el).find('.content-thumbnail img').attr('src'),
         rating: $(el).find('.gmr-rating-item').text().trim(),
-        duration: $(el).find('.gmr-duration-item').text().trim(),
+        durasi: $(el).find('.gmr-duration-item').text().trim(),
         quality: $(el).find('.gmr-quality-item a').text().trim()
       });
     });
@@ -41,12 +41,12 @@ router.get('/:page', async (req, res) => {
       }
     });
 
-    const highestPage = Math.max(...pages, 1);
+    const page = Math.max(...pages, 1);
 
     res.json({
       status: true,
       results,
-      highestPage
+      page
     });
   } catch (error) {
     console.error('Error scraping data:', error);
