@@ -8,10 +8,10 @@ router.get('/:page', async (req, res) => {
     const { page } = req.params;
     const { country, quality, movieyear, s, ...otherParams } = req.query;
 
-    // Helper function to build query string
+ 
     const buildQuery = (key, value) => (value ? `${key}=${encodeURIComponent(value)}` : '');
 
-    // Build query strings for selected parameters
+    // Membangun string kueri untuk parameter lain
     const selectedQueries = [
         buildQuery('country', country),
         buildQuery('quality', quality),
@@ -19,20 +19,20 @@ router.get('/:page', async (req, res) => {
         buildQuery('s', s)
     ].filter(Boolean).join('&');
 
-    // Build query strings for other parameters
+    // Buat string kueri untuk parameter lainnya
     const otherQueries = Object.entries(otherParams)
         .map(([key, value]) => buildQuery(key, value))
         .filter(Boolean)
         .join('&');
 
-    // Combine query strings
+    // Gabungkan string kueri
     const queryString = [selectedQueries, otherQueries].filter(Boolean).join('&');
     const url = `${film}/page/${page}/?${queryString}`;
 
     try {
         const { data } = await axios.get(url, {
             headers: {
-                'User-Agent': 'Mozilla/5.0'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
             }
         });
 
