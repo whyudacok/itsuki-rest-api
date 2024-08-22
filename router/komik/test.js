@@ -2,67 +2,144 @@ const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const router = express.Router();
+const { aniUrl, baseUrl, film } = require('../base-url');
 
-router.get('/:endpoint', async (req, res) => {
-  const url = `https://157.230.44.16/${req.params.endpoint}/`;
+router.get('/:page', async (req, res) => {
+    const { page } = req.params;
+    let results = {
+        anime: [],
+        komik: {
+            Totalpages: 0,
+            latestkomik: [],
+            komikPopuler: []
+        },
+        film: {
+            results: [],
+            totalPages: 0
+        }
+    };
 
-  try {
-    const { data } = await axios.get(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-      }
-    });
+    try {
+        // Scrape Anime
+        const animeUrl = aniUrl;
+        const animeResponse = await axios.get(animeUrl, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+            }
+        });
 
-    const $ = cheerio.load(data);
+        const animeHtml = animeResponse.data;
+        const $anime = cheerio.load(animeHtml);
 
-    const iframe = $('.gmr-embed-responsive iframe').attr('src') || '';
-    const img = $('.gmr-movie-data img').attr('src') || '';
-    const title = $('.gmr-movie-data-top h1.entry-title').text().trim() || '';
-    const desc = $('.entry-content p').text().trim() || '';
+        $anime('div.bsx').each((_, element) => {
+            const article = $anime(element).closest('article.bs');
+            let link = $anime(element).find('a').attr('href') || '';
+            const jenis = $anime(element).find('div.typez').text().trim() || '';
+            const judul = $anime(element).find('div.tt').text().trim() || '';
+            let gambar = $anime(element).find('img').attr('src') || '';
 
-    const author = $('.gmr-moviedata .entry-author a').text().trim() || '';
-    const postedOn = $('.gmr-moviedata time.entry-date.published').text().trim() || '';
-    const tagline = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Tagline:')).text().replace('Tagline:', '').trim() || '';
-    const genre = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Genre:')).find('a').text().trim() || '';
-    const quality = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Quality:')).find('a').text().trim() || '';
-    const year = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Year:')).find('a').text().trim() || '';
-    const duration = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Duration:')).text().replace('Duration:', '').trim() || '';
-    const country = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Country:')).find('a').map((_, el) => $(el).text().trim()).get().join(', ') || '';
-    const releaseDate = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Release:')).text().replace('Release:', '').trim() || '';
-    const language = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Language:')).text().replace('Language:', '').trim() || '';
-    const revenue = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Revenue:')).text().replace('Revenue:', '').trim() || '';
-    const director = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Director:')).find('a').text().trim() || '';
-    const cast = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Cast:')).find('a').map((_, el) => $(el).text().trim()).get().join(', ') || '';
+            if (gambar) {
+                gambar = gambar.replace('tv.animisme.net/wp-content/uploads', 'animasu.cc/wp-content/uploads');
+            }
 
-    res.json({
-      success: true,
-      data: {
-        iframe,
-        img,
-        title,
-        desc,
-        author,
-        postedOn,
-        tagline,
-        genre,
-        quality,
-        year,
-        duration,
-        country,
-        releaseDate,
-        language,
-        revenue,
-        director,
-        cast
-      }
-    });
-  } catch (err) {
-    console.error('Error:', err.message);
-    res.status(500).json({
-      success: false,
-      message: 'Terjadi kesalahan saat mengikis data.'
-    });
-  }
+            link = link.replace(aniUrl, '');
+            const episodeMatch = link.match(/episode-(\d+)/);
+            const episode = episodeMatch ? episodeMatch[1] : '';
+
+            results.anime.push({
+                link,
+                jenis,
+                judul,
+                gambar,
+                episode
+            });
+        });
+
+        // Scrape Komik
+        const komikUrl = `${baseUrl}/komik-terbaru/page/${page}/`;
+        const komikResponse = await axios.get(komikUrl, {
+            headers: {
+                'Origin': baseUrl,
+                'Referer': baseUrl,
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0'
+            }
+        });
+
+        const komikHtml = komikResponse.data;
+        const $komik = cheerio.load(komikHtml);
+
+        $komik(`a[href^="${baseUrl}"]`).each((_, el) => {
+            const href = $komik(el).attr('href');
+            $komik(el).attr('href', href.replace(baseUrl, ''));
+        });
+
+        $komik('.post-item-box').each((_, el) => {
+            results.komik.latestkomik.push({
+                link: $komik(el).find('a').attr('href'),
+                type: $komik(el).find('.flag-country-type').attr('class').split(' ').pop(),
+                gambar: $komik(el).find('.post-item-thumb img').attr('src'),
+                Title: $komik(el).find('.post-item-title h4').text().trim(),
+                warna: $komik(el).find('.color-label-manga').text().trim(),
+                chapter: {
+                    link: $komik(el).find('.lsch a').attr('href'),
+                    Title: $komik(el).find('.lsch a').text().trim(),
+                    Date: $komik(el).find('.datech').text().trim()
+                }
+            });
+        });
+
+        $komik('.list-series-manga.pop li').each((_, el) => {
+            results.komik.komikPopuler.push({
+                link: $komik(el).find('.thumbnail-series a.series').attr('href'),
+                gambar: $komik(el).find('.thumbnail-series img').attr('src'),
+                peringkat: $komik(el).find('.ctr').text().trim(),
+                Title: $komik(el).find('h4 a.series').text().trim(),
+                rating: $komik(el).find('.loveviews').text().trim()
+            });
+        });
+
+        results.komik.Totalpages = parseInt($komik('.pagination a.page-numbers').eq(-2).text().trim());
+
+        // Scrape Film
+        const filmUrl = `${film}/page/${page}/`;
+        const filmResponse = await axios.get(filmUrl, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+            }
+        });
+
+        const filmHtml = filmResponse.data;
+        const $film = cheerio.load(filmHtml);
+        $film(`a[href^="${film}"]`).each((_, el) => {
+            const href = $film(el).attr('href');
+            $film(el).attr('href', href.replace(film, ''));
+        });
+
+        $film('#gmr-main-load .item').each((_, el) => {
+            results.film.results.push({
+                title: $film(el).find('.entry-title a').text().trim(),
+                link: $film(el).find('.entry-title a').attr('href'),
+                gambar: $film(el).find('.content-thumbnail img').attr('src'),
+                rating: $film(el).find('.gmr-rating-item').text().trim(),
+                durasi: $film(el).find('.gmr-duration-item').text().trim(),
+                quality: $film(el).find('.gmr-quality-item a').text().trim()
+            });
+        });
+
+        results.film.totalPages = $film('.pagination .page-numbers').map((_, el) => parseInt($film(el).text().trim())).get();
+        results.film.totalPages = results.film.totalPages.length ? Math.max(...results.film.totalPages) : 1;
+
+        res.json({
+            status: true,
+            data: results
+        });
+    } catch (error) {
+        console.error('Error scraping data:', error);
+        res.status(500).json({
+            status: false,
+            message: 'Terjadi kesalahan saat mengambil data.'
+        });
+    }
 });
 
 module.exports = router;
