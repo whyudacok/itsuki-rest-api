@@ -48,7 +48,7 @@ const mangaRateLimiter = rateLimit({
   message: { status: false, message: "Limit permintaan tercapai untuk rute manga ini." }
 });
 
-const fimRateLimiter = rateLimit({
+const filmRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 menit
   max: 1000, // maksimal 500 request per 15 menit
   message: { status: false, message: "Limit permintaan tercapai untuk rute manga ini." }
