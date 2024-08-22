@@ -29,7 +29,8 @@ router.get('/:page', async (req, res) => {
         gambar: $(el).find('.content-thumbnail img').attr('src'),
         rating: $(el).find('.gmr-rating-item').text().trim(),
         durasi: $(el).find('.gmr-duration-item').text().trim(),
-        quality: $(el).find('.gmr-quality-item a').text().trim()
+        quality: $(el).find('.gmr-quality-item a').text().trim(),
+        trailer: $(element).find('.gmr-popup-button a').attr('href') || null
       });
     });
 
