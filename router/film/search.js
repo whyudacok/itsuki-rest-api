@@ -37,6 +37,10 @@ router.get('/:page', async (req, res) => {
         });
 
         const $ = cheerio.load(data);
+        $(`a[href^="${film}"]`).each((_, el) => {
+      const href = $(el).attr('href');
+      $(el).attr('href', href.replace(film, ''));
+    });
         const results = [];
 
         $('#gmr-main-load .item').each((_, element) => {
