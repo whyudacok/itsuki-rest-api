@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/:page', async (req, res) => {
   const { page } = req.params;
-  const url = `https://157.230.44.16/page/${page}/`;
+  const url = `https://157.230.44.16/?s=my&search=advanced&post_type=&index=&orderby=&genre=&movieyear=2016&country=&quality=`;
 
   try {
     const { data } = await axios.get(url, {
@@ -16,14 +16,14 @@ router.get('/:page', async (req, res) => {
 
     const $ = cheerio.load(data);
 
-    const articles = [];
+    const results = [];
     $('#gmr-main-load .item').each((_, el) => {
-      articles.push({
+      results.push({
         title: $(el).find('.entry-title a').text().trim(),
         link: $(el).find('.entry-title a').attr('href'),
-        imageUrl: $(el).find('.content-thumbnail img').attr('src'),
+        gambar: $(el).find('.content-thumbnail img').attr('src'),
         rating: $(el).find('.gmr-rating-item').text().trim(),
-        duration: $(el).find('.gmr-duration-item').text().trim(),
+        durasi: $(el).find('.gmr-duration-item').text().trim(),
         quality: $(el).find('.gmr-quality-item a').text().trim()
       });
     });
@@ -36,17 +36,17 @@ router.get('/:page', async (req, res) => {
       }
     });
 
-    const highestPage = Math.max(...pages, 1);
+    const page = Math.max(...pages, 1);
 
     res.json({
-      success: true,
-      articles,
-      highestPage
+      status: true,
+      results,
+      page
     });
   } catch (error) {
     console.error('Error scraping data:', error);
     res.status(500).json({
-      success: false,
+      status: false,
       message: 'Error scraping data'
     });
   }
