@@ -193,12 +193,12 @@ Gudangfilm menyediakan koleksi movie terlengkap dalam bahasa Indonesia.
   
   `/api/film/watch/:endpoint`
   
-  Default `page` adalah 1. Contoh: [/api/film/watch/jackpot-2024](https://cihuyy-api.vercel.app/api/film/watch/jackpot-2024)
+  Contoh: [/api/film/watch/jackpot-2024](https://cihuyy-api.vercel.app/api/film/watch/jackpot-2024)
   
 - #### Search 
   Untuk mendapatkan daftar pencarian berdasarkan tipe, seperti (title, tahun,).
   
-  `/api/film/search/:page/?:query&movieyear=:tahun`
-  `/api/film/search/:page/?query`
+  `/api/film/search/:page/?:endpoint&movieyear=:tahun`
+  `/api/film/search/:page/?:endpoint`
   
-  Default `page` adalah 1. Contoh: [/api/film/search/3/?s=mas&movieyear=2007](https://cihuyy-api.vercel.app/api/film/search/3/?s=mas&movieyear=2007)
+  Default `page` adalah 1. Contoh: [/api/film/search/3/?s=mas&movieyear=2007](https://cihuyy-api.vercel.app/api/film/search/1/?s=avengers)
