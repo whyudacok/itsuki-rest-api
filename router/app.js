@@ -25,6 +25,9 @@ const studioRoute = require('./anime/studio');
 const musimRoute = require('./anime/musim');
 const karakterRoute = require('./anime/karakter');
 const searchhRoute = require('./anime/search');
+const latestfRoute = require('/film/latest')
+const watchfRoute = require('./film/watch');
+const searchfRoute = require('./film/latest');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -42,6 +45,12 @@ const animeRateLimiter = rateLimit({
 const mangaRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 menit
   max: 500, // maksimal 500 request per 15 menit
+  message: { status: false, message: "Limit permintaan tercapai untuk rute manga ini." }
+});
+
+const fimRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 menit
+  max: 1000, // maksimal 500 request per 15 menit
   message: { status: false, message: "Limit permintaan tercapai untuk rute manga ini." }
 });
 
@@ -66,6 +75,12 @@ app.use('/api/komik/latest', mangaRateLimiter, updateRoute);
 app.use('/api/komik/genre', mangaRateLimiter, mangaGenreRoute);
 app.use('/api/komik/daftar', mangaRateLimiter, daftarRoute);
 app.use('/api/komik/search', mangaRateLimiter, searchRoute);
+
+// Router film 
+app.use('/api/film/latest', filmRateLimiter, latestfRoute);
+app.use('/api/film/watch', filmRateLimiter, watchfRoute);
+app.use('/api/film/search', filmRateLimiter, searchfRoute);
+
 
 app.use('/api/komik/test', mangaRateLimiter, mangaTestRoute);
 
