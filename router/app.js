@@ -4,9 +4,7 @@ const cors = require('cors');
 const axios = require('axios');
 const path = require('path');
 
-
 const mangaTestRoute = require('./komik/test');
-// Import semua route yang sudah kamu buat
 const chapterRoute = require('./komik/chapter');
 const mangaRoute = require('./komik/manga');
 const updateRoute = require('./komik/update');
@@ -25,9 +23,9 @@ const studioRoute = require('./anime/studio');
 const musimRoute = require('./anime/musim');
 const karakterRoute = require('./anime/karakter');
 const searchhRoute = require('./anime/search');
-const latestfRoute = require('/film/latest')
+const latestfRoute = require('./film/latest');
 const watchfRoute = require('./film/watch');
-const searchfRoute = require('./film/latest');
+const searchfRoute = require('./film/search');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -50,8 +48,8 @@ const mangaRateLimiter = rateLimit({
 
 const filmRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 menit
-  max: 1000, // maksimal 500 request per 15 menit
-  message: { status: false, message: "Limit permintaan tercapai untuk rute manga ini." }
+  max: 1000, // maksimal 1000 request per 15 menit
+  message: { status: false, message: "Limit permintaan tercapai untuk rute film ini." }
 });
 
 // Anime routes dengan rate limiter
@@ -81,7 +79,6 @@ app.use('/api/film/latest', filmRateLimiter, latestfRoute);
 app.use('/api/film/watch', filmRateLimiter, watchfRoute);
 app.use('/api/film/search', filmRateLimiter, searchfRoute);
 
-
 app.use('/api/komik/test', mangaRateLimiter, mangaTestRoute);
 
 app.set('view engine', 'ejs');
@@ -91,10 +88,12 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
-
-// proxy image 
+// Proxy image 
 app.get('/img', async (req, res, next) => {
   const imageUrl = req.query.url;
+  if (!imageUrl) {
+    return next(new Error('URL parameter is required'));
+  }
   try {
     const response = await axios({
       url: imageUrl,
@@ -105,12 +104,13 @@ app.get('/img', async (req, res, next) => {
     next(new Error('Error proxying image'));
   }
 });
+
 const fetchChapterData = async (endpoint) => {
   try {
     const response = await axios.get(`https://cihuyy-api.vercel.app/api/komik/chapter/${endpoint}`);
     return response.data;
   } catch (error) {
-    console.error('Terjadi kesalahan saat mengambil data chapter.:', error);
+    console.error('Terjadi kesalahan saat mengambil data chapter:', error);
     return null;
   }
 };
@@ -123,6 +123,7 @@ app.get('/api/komik/next-chapter/:endpoint', async (req, res, next) => {
   }
   res.json(data);
 });
+
 // Middleware untuk serve file statis
 app.use(express.static(path.join(__dirname, 'public')));
 
