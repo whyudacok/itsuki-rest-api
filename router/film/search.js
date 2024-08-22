@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const router = express.Router();
+const { film } = require('../base-url');
 
 router.get('/:page', async (req, res) => {
     const { page } = req.params;
@@ -27,7 +28,7 @@ router.get('/:page', async (req, res) => {
     // Gabungkan parameter yang diambil dan parameter lainnya
     const queryString = [otherQueryString, selectedQueryString].filter(Boolean).join('&');
 
-    const url = `${baseUrl}/page/${page}/?${queryString}`;
+    const url = `${film}/page/${page}/?${queryString}`;
 
   try {
     const { data } = await axios.get(url, {
