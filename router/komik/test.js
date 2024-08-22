@@ -20,16 +20,41 @@ router.get('/:endpoint', async (req, res) => {
     const title = $('.gmr-movie-data-top h1.entry-title').text().trim() || '';
     const desc = $('.entry-content p').text().trim() || '';
 
-    const info = {};
-    $('.gmr-moviedata').each((_, el) => {
-      const key = $(el).find('strong').text().replace(':', '').trim().toLowerCase();
-      const value = $(el).find('span, a, time').text().trim() || '';
-      info[key] = value;
-    });
+    const author = $('.gmr-moviedata .entry-author a').text().trim() || '';
+    const postedOn = $('.gmr-moviedata time.entry-date.published').text().trim() || '';
+    const tagline = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Tagline:')).text().replace('Tagline:', '').trim() || '';
+    const genre = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Genre:')).find('a').text().trim() || '';
+    const quality = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Quality:')).find('a').text().trim() || '';
+    const year = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Year:')).find('a').text().trim() || '';
+    const duration = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Duration:')).text().replace('Duration:', '').trim() || '';
+    const country = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Country:')).find('a').map((_, el) => $(el).text().trim()).get().join(', ') || '';
+    const releaseDate = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Release:')).text().replace('Release:', '').trim() || '';
+    const language = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Language:')).text().replace('Language:', '').trim() || '';
+    const revenue = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Revenue:')).text().replace('Revenue:', '').trim() || '';
+    const director = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Director:')).find('a').text().trim() || '';
+    const cast = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Cast:')).find('a').map((_, el) => $(el).text().trim()).get().join(', ') || '';
 
     res.json({
       success: true,
-      data: { iframe, img, title, desc, info }
+      data: {
+        iframe,
+        img,
+        title,
+        desc,
+        author,
+        postedOn,
+        tagline,
+        genre,
+        quality,
+        year,
+        duration,
+        country,
+        releaseDate,
+        language,
+        revenue,
+        director,
+        cast
+      }
     });
   } catch (err) {
     console.error('Error:', err.message);
