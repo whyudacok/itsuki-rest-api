@@ -2,10 +2,11 @@ const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const router = express.Router();
+const { film } = require('../base-url');
 
 router.get('/:page', async (req, res) => {
   const { page } = req.params;
-  const url = `https://157.230.44.16/page/${page}/`;
+  const url = `${film}/page/${page}/`;
 
   try {
     const { data } = await axios.get(url, {
@@ -15,6 +16,10 @@ router.get('/:page', async (req, res) => {
     });
 
     const $ = cheerio.load(data);
+    $(`a[href^="${film}"]`).each((_, el) => {
+      const href = $(el).attr('href');
+      $(el).attr('href', href.replace(film, ''));
+    });
 
     const results = [];
     $('#gmr-main-load .item').each((_, el) => {
