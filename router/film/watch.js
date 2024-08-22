@@ -28,16 +28,18 @@ router.get('/:endpoint', async (req, res) => {
     const year = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Year:')).find('a').text().trim() || '';
     const duration = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Duration:')).text().replace('Duration:', '').trim() || '';
     const country = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Country:')).find('a').map((_, el) => $(el).text().trim()).get().join(', ') || '';
-    const Date = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Release:')).text().replace('Release:', '').trim() || '';
+    const releaseDate = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Release:')).text().replace('Release:', '').trim() || '';
     const language = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Language:')).text().replace('Language:', '').trim() || '';
     const revenue = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Revenue:')).text().replace('Revenue:', '').trim() || '';
     const director = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Director:')).find('a').text().trim() || '';
     const cast = $('.gmr-moviedata').filter((_, el) => $(el).text().includes('Cast:')).find('a').map((_, el) => $(el).text().trim()).get().join(', ') || '';
+    const trailer = $('a.gmr-trailer-popup').attr('href') || '';
 
     res.json({
       status: true,
       data: {
         video,
+        trailer,
         gambar,
         title,
         desc,
@@ -49,7 +51,7 @@ router.get('/:endpoint', async (req, res) => {
         year,
         duration,
         country,
-        Date,
+        releaseDate,
         language,
         revenue,
         director,
