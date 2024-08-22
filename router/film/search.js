@@ -4,8 +4,30 @@ const cheerio = require('cheerio');
 const router = express.Router();
 
 router.get('/:page', async (req, res) => {
-  const { page } = req.params;
-  const url = `https://157.230.44.16/?s=my&search=advanced&post_type=&index=&orderby=&genre=&movieyear=2016&country=&quality=`;
+    const { page } = req.params;
+    const { country, quality, movieyear, s, ...otherParams } = req.query;
+
+    // Membuat query string untuk parameter yang diambil
+    const buildQuery = (key, value) => (value !== undefined && value !== '') ? `${key}=${encodeURIComponent(value)}` : '';
+
+    // Query string untuk parameter yang diambil
+    const selectedQueryString = [
+        buildQuery('country', country),
+        buildQuery('quality', quality),
+        buildQuery('movieyear', movieyear),
+        buildQuery('s', s)
+    ].filter(Boolean).join('&');
+
+    // Query string untuk parameter lainnya yang tidak diambil
+    const otherQueryString = Object.entries(otherParams)
+        .map(([key, value]) => buildQuery(key, value))
+        .filter(Boolean)
+        .join('&');
+
+    // Gabungkan parameter yang diambil dan parameter lainnya
+    const queryString = [otherQueryString, selectedQueryString].filter(Boolean).join('&');
+
+    const url = `${baseUrl}/page/${page}/?${queryString}`;
 
   try {
     const { data } = await axios.get(url, {
