@@ -32,7 +32,7 @@ router.get('/:page', async (req, res) => {
     try {
         const { data } = await axios.get(url, {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0'
             }
         });
 
@@ -43,9 +43,9 @@ router.get('/:page', async (req, res) => {
             results.push({
                 title: $(element).find('.entry-title a').text().trim(),
                 link: $(element).find('.entry-title a').attr('href'),
-                image: $(element).find('.content-thumbnail img').attr('src'),
+                gambar: $(element).find('.content-thumbnail img').attr('src'),
                 rating: $(element).find('.gmr-rating-item').text().trim(),
-                duration: $(element).find('.gmr-duration-item').text().trim(),
+                durasi: $(element).find('.gmr-duration-item').text().trim(),
                 quality: $(element).find('.gmr-quality-item a').text().trim()
             });
         });
