@@ -22,6 +22,18 @@ router.get('/:endpoint/:page', async (req, res) => {
       const href = $(el).attr('href');
       $(el).attr('href', href.replace(aniUrl, ''));
     });
+    // Ambil semua elemen <img>
+$('img').each((_, el) => {
+    // Ambil src dari gambar
+    let src = $(el).attr('src') || '';
+
+    // Ganti bagian dari src yang sesuai
+    if (src.includes('tv.animisme.net/wp-content/uploads')) {
+        src = src.replace('tv.animisme.net/wp-content/uploads', 'animasu.cc/wp-content/uploads');
+        $(el).attr('src', src);
+    }
+});
+
 
     const animeList = $('div.listupd article.bs').map((_, el) => ({
       link: $(el).find('div.bsx a').attr('href') || '',
