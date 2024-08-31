@@ -24,18 +24,15 @@ router.get('/:endpoint', async (req, res) => {
       const href = $(el).attr('href');
       $(el).attr('href', href.replace(aniUrl, ''));
     });
-    // Ambil semua elemen <img>
-$('img').each((_, el) => {
-    // Ambil src dari gambar
-    let src = $(el).attr('src') || '';
 
-    // Ganti bagian dari src yang sesuai
-    if (src.includes('tv.animisme.net/wp-content/uploads')) {
+    // Update image sources
+    $('img').each((_, el) => {
+      let src = $(el).attr('src') || '';
+      if (src.includes('tv.animisme.net/wp-content/uploads')) {
         src = src.replace('tv.animisme.net/wp-content/uploads', 'animasu.cc/wp-content/uploads');
         $(el).attr('src', src);
-    }
-});
-
+      }
+    });
 
     // Extract iframe src and mirror options
     const vidutama = $('.video-content #embed_holder #pembed iframe').attr('src');
@@ -57,11 +54,24 @@ $('img').each((_, el) => {
       return { link, gambar, judul, eps };
     }).get();
 
+    // Extract recommendations
+    const recommendations = [];
+    $('div.listupd article').each((_, element) => {
+      recommendations.push({
+        link: $(element).find('a').attr('href') || '',
+        type: $(element).find('div.typez').text().trim() || '',
+        epx: $(element).find('div.bt span.epx').text().trim() || '',
+        img: $(element).find('img').attr('src') || '',
+        title: $(element).find('h2[itemprop="headline"]').text().trim() || ''
+      });
+    });
+
     // Extract additional details
     const data = {
       vidutama,
       video,
       episodes,
+      recommendations,
       judul: $('h1.entry-title').text().trim(),
       episodeNumber: $('meta[itemprop="episodeNumber"]').attr('content'),
       episodeExt: $('span.epx').text().trim(),
