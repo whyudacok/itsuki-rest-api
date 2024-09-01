@@ -16,8 +16,9 @@ router.get('/', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
-    // Find the video element and extract the src attribute
-    const videoSrc = $('video.jw-video').attr('src');
+    // Attempt to find the video element and extract the src attribute
+    const videoElement = $('video');
+    const videoSrc = videoElement.attr('src');
 
     if (videoSrc) {
       res.json({
@@ -27,7 +28,7 @@ router.get('/', async (req, res) => {
     } else {
       res.json({
         status: false,
-        message: 'Video source not found'
+        message: 'Video source not found or src is generated dynamically'
       });
     }
   } catch (error) {
