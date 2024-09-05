@@ -1,44 +1,31 @@
 const express = require('express');
 const axios = require('axios');
-const cheerio = require('cheerio');
 const router = express.Router();
 
-// Fungsi untuk scraping
-async function scrapeData() {
+// Route untuk scraping
+router.get('/', async (req, res) => {
   try {
-    const { data } = await axios.get('https://meionovel.id/');
-    const $ = cheerio.load(data);
-    const results = [];
+    const response = await axios.get('https://meionovel.id/');
+    const html = response.data;
+    
+    // Contoh ekstraksi data judul dari page
+    // Cari elemen <h3 class="h5"> yang ada link judulnya
+    const regex = /<h3 class="h5">.*?<a href=".*?">(.*?)<\/a>/g;
+    let titles = [];
+    let match;
+    
+    // Loop untuk menemukan semua judul
+    while ((match = regex.exec(html)) !== null) {
+      titles.push(match[1]);
+    }
 
-    $('.page-listing-item').each((i, element) => {
-      const title = $(element).find('.post-title a').text().trim();
-      const rating = $(element).find('.post-total-rating .score').text().trim();
-      const chapter = $(element).find('.list-chapter .chapter a').first().text().trim();
-      const chapterUrl = $(element).find('.list-chapter .chapter a').first().attr('href');
-      const imageUrl = $(element).find('.item-thumb img').attr('src');
-      const lastUpdate = $(element).find('.post-on').first().text().trim();
-
-      results.push({
-        title,
-        rating,
-        chapter,
-        chapterUrl,
-        imageUrl,
-        lastUpdate
-      });
+    res.json({
+      titles: titles
     });
 
-    return results;
   } catch (error) {
-    console.error(error);
-    return [];
+    res.status(500).send('Error fetching page: ' + error.message);
   }
-}
-
-// Route untuk menampilkan hasil scraping
-router.get('/', async (req, res) => {
-  const data = await scrapeData();
-  res.json(data);
 });
 
 module.exports = router;
