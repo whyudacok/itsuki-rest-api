@@ -1,5 +1,5 @@
 module.exports = {
-    baseUrl: 'https://komikcast.cafe',
+    baseUrl: 'https://komikcast.one',
     aniUrl: 'https://tv.animisme.net',
     film: 'https://157.230.44.16'
 };
