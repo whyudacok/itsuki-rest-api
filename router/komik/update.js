@@ -6,7 +6,7 @@ const { baseUrl } = require('../base-url');
 
 router.get('/:page', async (req, res) => {
   const { page } = req.params;
-  const url = `${baseUrl}/komik-terbaru/`;
+  const url = `https://app.scrapingbee.com/api/v1/?api_key=OQ3DTRI7YLDY3Z9Z6XD1S1V53T0F33T55XNAH0RV73J6ENM8F7G1ZPE60BPL7OZGZKOY11OF9ATYWOUQ&url=${baseUrl}/komik-terbaru/page/${page}`;
 
   try {
 const response = await axios.get(url, {
