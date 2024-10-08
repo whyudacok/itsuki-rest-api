@@ -28,8 +28,8 @@ router.get('/:endpoint', async (req, res) => {
     // Update image sources
     $('img').each((_, el) => {
       let src = $(el).attr('src') || '';
-      if (src.includes('tv.animisme.net/wp-content/uploads')) {
-        src = src.replace('tv.animisme.net/wp-content/uploads', 'animasu.cc/wp-content/uploads');
+      if (src.includes('tv0.animisme.net/wp-content/uploads')) {
+        src = src.replace('tv0.animisme.net/wp-content/uploads', 'animasu.cc/wp-content/uploads');
         $(el).attr('src', src);
       }
     });
