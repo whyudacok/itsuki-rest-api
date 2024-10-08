@@ -2,35 +2,29 @@ const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const router = express.Router();
-
-// Konfigurasi API ScrapingBee
-const API_KEY = 'OQ3DTRI7YLDY3Z9Z6XD1S1V53T0F33T55XNAH0RV73J6ENM8F7G1ZPE60BPL7OZGZKOY11OF9ATYWOUQ';
-const BASE_URL = 'https://app.scrapingbee.com/api/v1/';
 const { baseUrl } = require('../base-url');
 
 router.get('/:page', async (req, res) => {
   const { page } = req.params;
-  const targetUrl = `${baseUrl}/komik-terbaru/page/${page}`;
-  const url = `${BASE_URL}?api_key=${API_KEY}&url=${targetUrl}`;
+  const url = `${baseUrl}/komik-terbaru/page/${page}/`;
 
   try {
     const response = await axios.get(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'text/html',
+        'Origin': baseUrl,
+        'Referer': baseUrl,
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0'
       }
     });
 
     const html = response.data;
     const $ = cheerio.load(html);
 
-    // Mengubah href berdasarkan baseUrl
     $(`a[href^="${baseUrl}"]`).each((_, el) => {
       const href = $(el).attr('href');
       $(el).attr('href', href.replace(baseUrl, ''));
     });
 
-    // Mengambil data terbaru komik
     const latestkomik = [];
     $('.post-item-box').each((_, el) => {
       latestkomik.push({
@@ -47,7 +41,6 @@ router.get('/:page', async (req, res) => {
       });
     });
 
-    // Mengambil data komik populer
     const komikPopuler = [];
     $('.list-series-manga.pop li').each((_, el) => {
       komikPopuler.push({
