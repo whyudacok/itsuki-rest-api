@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
 
             // Replace the domain in the image URL
             if (gambar) {
-                gambar = gambar.replace('tv.animisme.net/wp-content/uploads', 'animasu.cc/wp-content/uploads');
+                gambar = gambar.replace('tv0.animisme.net/wp-content/uploads', 'animasu.cc/wp-content/uploads');
             }
 
             // Remove the domain part from the link
