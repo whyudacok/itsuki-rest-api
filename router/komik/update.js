@@ -9,13 +9,24 @@ router.get('/:page', async (req, res) => {
   const url = `${baseUrl}/komik-terbaru/page/${page}/`;
 
   try {
-    const response = await axios.get(url, {
-      headers: {
-        'Origin': baseUrl,
-        'Referer': baseUrl,
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0'
-      }
-    });
+const response = await axios.get(url, {
+  headers: {
+    'Origin': baseUrl,
+    'Referer': baseUrl,
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Connection': 'keep-alive',
+    'Cache-Control': 'max-age=0',
+    'Upgrade-Insecure-Requests': '1',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'same-origin',
+    'Sec-Fetch-User': '?1'
+  }
+});
+
 
     const html = response.data;
     const $ = cheerio.load(html);
