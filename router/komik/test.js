@@ -1,37 +1,44 @@
 const express = require('express');
 const axios = require('axios');
+const cheerio = require('cheerio');
 const router = express.Router();
 
-// Route untuk scraping
+// Route untuk scraping data dari Komikcast
 router.get('/', async (req, res) => {
+  const url = 'https://komikcast.cz/';
   try {
-    const response = await axios.get('https://meionovel.id/', {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'Connection': 'keep-alive'
-      }
+    // Lakukan permintaan ke halaman Komikcast
+    const { data } = await axios.get(url);
+    const $ = cheerio.load(data);
+
+    // Array untuk menyimpan hasil scraping
+    const komikData = [];
+
+    // Selector berdasarkan struktur HTML yang diberikan
+    $('.utao').each((i, el) => {
+      const title = $(el).find('.luf h3').text().trim();
+      const link = $(el).find('.luf a').attr('href');
+      const img = $(el).find('.imgu img').attr('data-src') || $(el).find('.imgu img').attr('src');
+      const chapters = [];
+
+      // Mendapatkan informasi chapter
+      $(el)
+        .find('.luf ul li')
+        .each((i, chapterEl) => {
+          const chapterLink = $(chapterEl).find('a').attr('href');
+          const chapterTitle = $(chapterEl).find('a').text().trim();
+          const chapterTime = $(chapterEl).find('span i').text().trim();
+          chapters.push({ chapterTitle, chapterLink, chapterTime });
+        });
+
+      // Simpan data komik dalam array
+      komikData.push({ title, link, img, chapters });
     });
-    const html = response.data;
-    
-    // Contoh ekstraksi data judul dari page
-    const regex = /<h3 class="h5">.*?<a href=".*?">(.*?)<\/a>/g;
-    let titles = [];
-    let match;
 
-    // Loop untuk menemukan semua judul
-    while ((match = regex.exec(html)) !== null) {
-      titles.push(match[1]);
-    }
-
-    res.json({
-      titles: titles
-    });
-
+    // Kirim hasil scraping sebagai respons JSON
+    res.json(komikData);
   } catch (error) {
-    res.status(500).send('Error fetching page: ' + error.message);
+    res.status(500).json({ message: 'Error scraping data', error });
   }
 });
 
