@@ -1,52 +1,46 @@
+// routes/scrape.js
+const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const express = require('express');
+
 const router = express.Router();
 
+// Route untuk scraping
 router.get('/', async (req, res) => {
-  const url = 'https://komikcast.cz/';
-  try {
-    const { data } = await axios.get(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Cache-Control': 'no-cache',
-      },
-      proxy: {
-        host: '197.234.13.36',
-        port: 4145,
-        auth: {
-          username: 'YOUR_PROXY_USERNAME', // jika diperlukan
-          password: 'YOUR_PROXY_PASSWORD'  // jika diperlukan
-        }
-      }
-    });
+    try {
+        const response = await axios.get('https://komikcast.cz/');
+        const html = response.data;
+        const $ = cheerio.load(html);
+        const komiks = [];
 
-    const $ = cheerio.load(data);
-    const komikData = [];
+        $('.utao').each((index, element) => {
+            const title = $(element).find('h3').text();
+            const imgSrc = $(element).find('.imgu img').attr('data-src');
+            const link = $(element).find('.luf a.series').attr('href');
 
-    $('.utao').each((i, el) => {
-      const title = $(el).find('.luf h3').text().trim();
-      const link = $(el).find('.luf a').attr('href');
-      const img = $(el).find('.imgu img').attr('data-src') || $(el).find('.imgu img').attr('src');
-      const chapters = [];
+            // Mendapatkan chapter terbaru
+            const latestChapter = $(element).find('.Manhwa li').first();
+            const chapterLink = latestChapter.find('a').attr('href');
+            const chapterText = latestChapter.find('a').text();
+            const chapterTime = latestChapter.find('span i').text();
 
-      $(el).find('.luf ul li').each((i, chapterEl) => {
-        const chapterLink = $(chapterEl).find('a').attr('href');
-        const chapterTitle = $(chapterEl).find('a').text().trim();
-        const chapterTime = $(chapterEl).find('span i').text().trim();
-        chapters.push({ chapterTitle, chapterLink, chapterTime });
-      });
+            komiks.push({
+                title,
+                imgSrc,
+                link,
+                latestChapter: {
+                    text: chapterText,
+                    link: chapterLink,
+                    time: chapterTime
+                }
+            });
+        });
 
-      komikData.push({ title, link, img, chapters });
-    });
-
-    res.json(komikData);
-  } catch (error) {
-    res.status(500).json({ message: 'Error scraping data', error });
-  }
+        res.json(komiks);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error occurred while scraping');
+    }
 });
 
 module.exports = router;
