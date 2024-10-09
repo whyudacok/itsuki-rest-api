@@ -15,8 +15,8 @@ router.get('/', async (req, res) => {
         'Cache-Control': 'no-cache',
       },
       proxy: {
-        host: '189.41.83.62',
-        port: 1080,
+        host: '197.234.13.36',
+        port: 4145,
         auth: {
           username: 'YOUR_PROXY_USERNAME', // jika diperlukan
           password: 'YOUR_PROXY_PASSWORD'  // jika diperlukan
