@@ -1,48 +1,49 @@
-// router/komik.js
-import express from 'express';
-import axios from 'axios';
-
+// routes/scrape.js
+const express = require('express');
 const router = express.Router();
+const axios = require('axios');
+const cheerio = require('cheerio');
 
-router.get('/scrape', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const response = await axios.get('https://komikcast.cz/', {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                'Accept-Language': 'en-US,en;q=0.5',
-                'Cache-Control': 'no-cache',
-                'DNT': '1',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Encoding': 'gzip, deflate, br, zstd',
+                'Accept-Language': 'id-ID',
                 'Connection': 'keep-alive',
-                'Upgrade-Insecure-Requests': '1',
-                'Referer': 'https://komikcast.cz/',
-            },
-            timeout: 10000,
+                'Host': 'komikcast.cz',
+                'User-Agent': 'Mozilla/5.0 (Android 10; Mobile; rv:133.0) Gecko/133.0 Firefox/133.0',
+                'Cookie': 'HstCfa3653987=1728482130498; HstCla3653987=1728483531039; HstCmu3653987=1728482130498; HstPn3653987=7; HstPt3653987=7; HstCnv3653987=1; HstCns3653987=2; cf_clearance=c376823lu309ta1mlXUlzti1jItFWxl.VUiETrhP_8c-1728483488-1.2.1.1-Kgrxjzgv0C6udJn1pMFSRJZYvcpPShGWpG1AjLnJUAR1LgRY0Ckt8Qf_C_hZCqD6zwBJr85v6BlukeZtycmdaN9PTQw3iSTs1JYt4FkYzRdfQTIEVLYB39fDEMejaMmobNH.sL8FDhoFJ.1irh1hnYIwBGcitRhKWdG8V.gaxW78HYpr6k4HdYDpDIK98RZS1xeUiXUYowLy1JBsDL8a4N2j7cXHSbh0yHnjgju6Q5OEruvYIi2mzZuVWEpo_p2LJdFy5wdL1sajO4zGGQsZKFg2..nN5IuQ.fstvyT3HjIkyUCkSprtNQtw3GFB7C8yITlyXUgm9Qvtafqw3AVR2g; __dtsu=1040172848214008A3F82F4E356C3D41; _ga_86TH8K4Q71=GS1.1.1728482196.1.1.1728483552.0.0.0; _ga=GA1.1.659751055.1728482196; _gid=GA1.2.1906467717.1728482197; _gat_gtag_UA_111351430_1=1',
+            }
         });
 
-        const data = response.data;
-
-        // Parsing data menggunakan regex
-        const regex = /<a class="series" href="([^"]+)">.*?<h3>(.*?)<\/h3>/g;
-        let matches;
+        const html = response.data;
+        const $ = cheerio.load(html);
         const results = [];
 
-        while ((matches = regex.exec(data)) !== null) {
-            results.push({
-                link: matches[1],
-                title: matches[2],
-            });
-        }
+        $('.utao').each((index, element) => {
+            const title = $(element).find('h3').text().trim();
+            const image = $(element).find('img').attr('data-src');
+            const link = $(element).find('a.series').attr('href');
+            const chapters = [];
 
-        res.status(200).json({ message: "Data scraped successfully", results });
+            $(element).find('.Manhwa li').each((i, el) => {
+                const chapterTitle = $(el).find('a').text().trim();
+                const chapterLink = $(el).find('a').attr('href');
+                const timestamp = $(el).find('span i').text().trim();
+
+                chapters.push({ chapterTitle, chapterLink, timestamp });
+            });
+
+            results.push({ title, image, link, chapters });
+        });
+
+        res.json(results);
     } catch (error) {
-        console.error("Error scraping data", error.message);
-        if (error.response) {
-            res.status(error.response.status).json({ message: "Error scraping data", error: error.response.data });
-        } else {
-            res.status(500).json({ message: "Error scraping data", error: error.message });
-        }
+        console.error("Error scraping data:", error);
+        res.status(500).json({ message: "Error scraping data", error: error.message });
     }
 });
 
-export default router;
+module.exports = router;
