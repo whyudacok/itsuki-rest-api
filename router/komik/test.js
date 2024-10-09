@@ -7,8 +7,18 @@ const router = express.Router();
 
 // Route untuk scraping
 router.get('/', async (req, res) => {
+    const url = 'https://komikcast.cz/';
+    
     try {
-        const response = await axios.get('https://komikcast.cz/');
+        // Mengatur header untuk menghindari 403 Forbidden
+        const response = await axios.get(url, {
+            headers: {
+                'User Agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.36,
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Referer': 'https://komikcast.cz/', // URL referer yang valid
+            }
+        });
+
         const html = response.data;
         const $ = cheerio.load(html);
         const komiks = [];
@@ -39,8 +49,13 @@ router.get('/', async (req, res) => {
         res.json(komiks);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error occurred while scraping');
+        if (error.response) {
+            res.status(error.response.status).send('Error occurred while scraping');
+        } else {
+            res.status(500).send('Internal Server Error');
+        }
     }
 });
 
 module.exports = router;
+        
