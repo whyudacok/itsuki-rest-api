@@ -1,41 +1,39 @@
-const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const express = require('express');
 const router = express.Router();
 
-// Route untuk scraping data dari Komikcast
 router.get('/', async (req, res) => {
   const url = 'https://komikcast.cz/';
   try {
-    // Lakukan permintaan ke halaman Komikcast
-    const { data } = await axios.get(url);
-    const $ = cheerio.load(data);
+    const { data } = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Cache-Control': 'no-cache'
+      }
+    });
 
-    // Array untuk menyimpan hasil scraping
+    const $ = cheerio.load(data);
     const komikData = [];
 
-    // Selector berdasarkan struktur HTML yang diberikan
     $('.utao').each((i, el) => {
       const title = $(el).find('.luf h3').text().trim();
       const link = $(el).find('.luf a').attr('href');
       const img = $(el).find('.imgu img').attr('data-src') || $(el).find('.imgu img').attr('src');
       const chapters = [];
 
-      // Mendapatkan informasi chapter
-      $(el)
-        .find('.luf ul li')
-        .each((i, chapterEl) => {
-          const chapterLink = $(chapterEl).find('a').attr('href');
-          const chapterTitle = $(chapterEl).find('a').text().trim();
-          const chapterTime = $(chapterEl).find('span i').text().trim();
-          chapters.push({ chapterTitle, chapterLink, chapterTime });
-        });
+      $(el).find('.luf ul li').each((i, chapterEl) => {
+        const chapterLink = $(chapterEl).find('a').attr('href');
+        const chapterTitle = $(chapterEl).find('a').text().trim();
+        const chapterTime = $(chapterEl).find('span i').text().trim();
+        chapters.push({ chapterTitle, chapterLink, chapterTime });
+      });
 
-      // Simpan data komik dalam array
       komikData.push({ title, link, img, chapters });
     });
 
-    // Kirim hasil scraping sebagai respons JSON
     res.json(komikData);
   } catch (error) {
     res.status(500).json({ message: 'Error scraping data', error });
