@@ -1,7 +1,7 @@
 // routes/scrape.js
 const express = require('express');
 const router = express.Router();
-const AxiosService = require('../../services/AxiosService'); // Mengimpor AxiosService
+const AxiosService = require('../services/AxiosService'); // Mengimpor AxiosService
 const cheerio = require('cheerio');
 
 // Daftar User-Agent yang berbeda
