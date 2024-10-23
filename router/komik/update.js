@@ -20,38 +20,44 @@ router.get('/:page', async (req, res) => {
     const html = response.data;
     const $ = cheerio.load(html);
 
-    // Menghapus baseUrl dari link
     $(`a[href^="${baseUrl}"]`).each((_, el) => {
       const href = $(el).attr('href');
       $(el).attr('href', href.replace(baseUrl, ''));
     });
 
-    // Mengambil total halaman
-    const Totalpages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim());
-
-    // Mengambil data komik
-    const komikList = [];
-    $('.animepost').each((index, element) => {
-      const title = $(element).find('.bigor .tt h4').text().trim();
-      const url = $(element).find('a[itemprop="url"]').attr('href').replace(baseUrl, ''); // Menghapus baseUrl
-      const image = $(element).find('img[itemprop="image"]').attr('src');
-      const latestChapter = $(element).find('.adds .lsch a').text().trim();
-      const chapterUrl = $(element).find('.adds .lsch a').attr('href').replace(baseUrl, ''); // Menghapus baseUrl
-      const chapterDate = $(element).find('.adds .lsch .datech').text().trim();
-
-      komikList.push({
-        title,
-        url,
-        image,
-        latestChapter,
-        chapterUrl,
-        chapterDate,
+    const latestkomik = [];
+    $('.post-item-box').each((_, el) => {
+      latestkomik.push({
+        link: $(el).find('a').attr('href'),
+        type: $(el).find('.flag-country-type').attr('class').split(' ').pop(),
+        gambar: $(el).find('.post-item-thumb img').attr('src'),
+        Title: $(el).find('.post-item-title h4').text().trim(),
+        warna: $(el).find('.color-label-manga').text().trim(),
+        chapter: {
+          link: $(el).find('.lsch a').attr('href'),
+          Title: $(el).find('.lsch a').text().trim(),
+          Date: $(el).find('.datech').text().trim()
+        }
       });
     });
 
+    const komikPopuler = [];
+    $('.list-series-manga.pop li').each((_, el) => {
+      komikPopuler.push({
+        link: $(el).find('.thumbnail-series a.series').attr('href'),
+        gambar: $(el).find('.thumbnail-series img').attr('src'),
+        peringkat: $(el).find('.ctr').text().trim(),
+        Title: $(el).find('h4 a.series').text().trim(),
+        rating: $(el).find('.loveviews').text().trim()
+      });
+    });
+
+    const Totalpages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim());
+
     const data = {
       Totalpages,
-      komikList, // Menambahkan daftar komik
+      latestkomik,
+      komikPopuler
     };
 
     // Kirim respons JSON ke client
