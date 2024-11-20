@@ -13,7 +13,7 @@ router.get('/:page', async (req, res) => {
       headers: {
         'Origin': baseUrl,
         'Referer': baseUrl,
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0'
       }
     });
 
