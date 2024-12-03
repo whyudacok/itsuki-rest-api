@@ -43,15 +43,16 @@ $('.animepost').each((_, el) => {
 
 
     const komikPopuler = [];
-    $('.list-series-manga.pop li').each((_, el) => {
-      komikPopuler.push({
-        link: $(el).find('.thumbnail-series a.series').attr('href'),
-        gambar: $(el).find('.thumbnail-series img').attr('src'),
-        peringkat: $(el).find('.ctr').text().trim(),
-        Title: $(el).find('h4 a.series').text().trim(),
-        rating: $(el).find('.loveviews').text().trim()
-      });
-    });
+$('.list-series-manga.pop li').each((_, el) => {
+  komikPopuler.push({
+    link: $(el).find('.imgseries a.series').attr('href'), // Link komik
+    gambar: $(el).find('.imgseries img').attr('data-lazy-src') || $(el).find('.imgseries img').attr('src'), // Gambar, menggunakan lazy loading jika ada
+    peringkat: $(el).find('.ctr').text().trim(), // Peringkat
+    Title: $(el).find('.leftseries h4 a.series').text().trim(), // Judul komik
+    rating: $(el).find('.loveviews').text().trim() // Rating komik
+  });
+});
+
 
     const Totalpages = parseInt($('.pagination a.page-numbers').eq(-2).text().trim());
 
