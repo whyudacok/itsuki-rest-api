@@ -25,11 +25,9 @@ router.get('/:page', async (req, res) => {
       $(el).attr('href', href.replace(baseUrl, ''));
     });
 
-const latestKomik = [];
-$('.animepost').each((_, el) => {
-  const $el = $(el);
-
-  latestKomik.push({
+const latestkomik = [];
+    $('.animepost').each((_, el) => {
+      latestkomik.push({
     link: $el.find('.animposx a').attr('href'),
     type: $el.find('.typeflag').text().trim(),
     gambar: $el.find('.limit img').attr('src'),
@@ -38,11 +36,10 @@ $('.animepost').each((_, el) => {
       link: $el.find('.lsch a').attr('href'),
       Title: $el.find('.lsch a').text().trim(),
       Date: $el.find('.lsch .datech').text().trim(),
-    },
-  });
-});
-
-
+        }
+      });
+    });
+    
     const komikPopuler = [];
     $('.list-series-manga.pop li').each((_, el) => {
       komikPopuler.push({
