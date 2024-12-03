@@ -25,21 +25,23 @@ router.get('/:page', async (req, res) => {
       $(el).attr('href', href.replace(baseUrl, ''));
     });
 
-    const latestkomik = [];
-    $('.post-item-box').each((_, el) => {
-      latestkomik.push({
-        link: $(el).find('a').attr('href'),
-        type: $(el).find('.flag-country-type').attr('class').split(' ').pop(),
-        gambar: $(el).find('.post-item-thumb img').attr('src'),
-        Title: $(el).find('.post-item-title h4').text().trim(),
-        warna: $(el).find('.color-label-manga').text().trim(),
-        chapter: {
-          link: $(el).find('.lsch a').attr('href'),
-          Title: $(el).find('.lsch a').text().trim(),
-          Date: $(el).find('.datech').text().trim()
-        }
-      });
-    });
+const latestKomik = [];
+$('.animepost').each((_, el) => {
+  const $el = $(el);
+
+  latestKomik.push({
+    link: $el.find('.animposx a').attr('href'),
+    type: $el.find('.typeflag').text().trim(),
+    gambar: $el.find('.limit img').attr('src'),
+    Title: $el.find('.bigor .tt h4').text().trim(),
+    chapter: {
+      link: $el.find('.lsch a').attr('href'),
+      Title: $el.find('.lsch a').text().trim(),
+      Date: $el.find('.lsch .datech').text().trim(),
+    },
+  });
+});
+
 
     const komikPopuler = [];
     $('.list-series-manga.pop li').each((_, el) => {
