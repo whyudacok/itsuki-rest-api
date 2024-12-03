@@ -6,7 +6,7 @@ const { baseUrl } = require('../base-url');
 
 router.get('/:page', async (req, res) => {
   const { page } = req.params;
-  const url = `${baseUrl}/`;
+  const url = `${baseUrl}/komik-terbaru/page/${page}/`;
 
   try {
     const response = await axios.get(url, {
