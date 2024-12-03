@@ -26,21 +26,20 @@ router.get('/:page', async (req, res) => {
     });
 
 const latestkomik = [];
-    $('.post-item-box').each((_, el) => {
-      latestkomik.push({
-        link: $(el).find('a').attr('href'),
-        type: $(el).find('.flag-country-type').attr('class').split(' ').pop(),
-        gambar: $(el).find('.post-item-thumb img').attr('src'),
-        Title: $(el).find('.post-item-title h4').text().trim(),
-        warna: $(el).find('.color-label-manga').text().trim(),
-        chapter: {
-          link: $(el).find('.lsch a').attr('href'),
-          Title: $(el).find('.lsch a').text().trim(),
-          Date: $(el).find('.datech').text().trim()
-        }
-      });
-    });
-    
+$('.animepost').each((_, el) => {
+  latestkomik.push({
+    link: $(el).find('a').attr('href'),
+    type: $(el).find('.typeflag').text().trim(), // Selector untuk type (Manga)
+    gambar: $(el).find('.limit img').attr('src'), // Selector untuk gambar
+    Title: $(el).find('.bigor .tt h4').text().trim(), // Selector untuk judul komik
+    chapter: {
+      link: $(el).find('.lsch a').attr('href'),
+      Title: $(el).find('.lsch a').text().trim(),
+      Date: $(el).find('.datech').text().trim() // Selector untuk tanggal chapter
+    }
+  });
+});
+
     const komikPopuler = [];
     $('.list-series-manga.pop li').each((_, el) => {
       komikPopuler.push({
