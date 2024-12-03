@@ -29,16 +29,18 @@ const latestkomik = [];
 $('.animepost').each((_, el) => {
   latestkomik.push({
     link: $(el).find('a').attr('href'),
-    type: $(el).find('.typeflag').text().trim(), // Selector untuk type (Manga)
-    gambar: $(el).find('.limit img').attr('src'), // Selector untuk gambar
-    Title: $(el).find('.bigor .tt h4').text().trim(), // Selector untuk judul komik
+    type: $(el).find('.typeflag').text().trim(),
+    gambar: $(el).find('.limit img').attr('data-lazy-src') || $(el).find('.limit img').attr('src'), // Mengambil URL dari data-lazy-src atau src
+    Title: $(el).find('.bigor .tt h4').text().trim(),
     chapter: {
       link: $(el).find('.lsch a').attr('href'),
       Title: $(el).find('.lsch a').text().trim(),
-      Date: $(el).find('.datech').text().trim() // Selector untuk tanggal chapter
+      Date: $(el).find('.datech').text().trim()
     }
   });
 });
+
+
 
     const komikPopuler = [];
     $('.list-series-manga.pop li').each((_, el) => {
